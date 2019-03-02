@@ -23,6 +23,7 @@ ExportedObj/
 *.svd
 *.pdb
 *.opendb
+*.swp
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -34,3 +35,13 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# OS generated
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
