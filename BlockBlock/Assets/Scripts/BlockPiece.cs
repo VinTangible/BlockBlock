@@ -15,4 +15,10 @@ public class BlockPiece : MonoBehaviour
     {
         
     }
+
+    void OnMouseDrag()
+    {
+        Vector2 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        transform.parent.position = newPosition;
+    }
 }
