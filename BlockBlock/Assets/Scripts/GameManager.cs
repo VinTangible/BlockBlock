@@ -38,10 +38,10 @@ public class GameManager : MonoBehaviour
     public void SpawnNextBlock(Vector2 startingPosition)
     {
         GameObject nextBlock = (GameObject)Instantiate(
-                    Resources.Load(GetRandomBlock(), typeof(GameObject)),
-                        startingPosition, Quaternion.identity);
+            Resources.Load(GetRandomBlock(), typeof(GameObject)),
+                startingPosition, Quaternion.identity);
         
-        nextBlock.transform.Rotate(new Vector3(0, 0, GetRandomRotation()));
+        RotateBlock(nextBlock.GetComponentInParent<Block>());
     }
 
     public bool SnapToGrid(Block block)
@@ -56,7 +56,12 @@ public class GameManager : MonoBehaviour
 
                 block.transform.position = roundedPosition;
 
+                // disabling the BoxCollider2D component will disable dragging
                 blockPiece.GetComponent<BoxCollider2D>().enabled = false;
+
+                // disabling the Block component in the parent will disable Block's script.
+                // this prevents multiple blocks from spawning after this current block is placed
+                blockPiece.GetComponentInParent<Block>().enabled = false;
             }
 
             return true;
@@ -99,6 +104,26 @@ public class GameManager : MonoBehaviour
         return new Vector2(Mathf.Round(position.x), Mathf.Round(position.y));
     }
 
+    // Rotates the block component in increments of 90, 180, or 270 degrees.
+    // Squares don't need to be rotated and the long pieces only have to be rotated 90 degrees.
+    // The el pieces are the ones that have full rotation allowed.
+    void RotateBlock(Block block)
+    {
+        if(block.allowRotation)
+        {
+            if(block.limitRotation)
+            {
+                // this is for the long pieces; rotate 90 degrees only
+                block.transform.Rotate(new Vector3(0, 0, GetRandomRotation(true)));
+            }
+            else
+            {
+                // this is for the el pieces, they have full rotation
+                block.transform.Rotate(new Vector3(0, 0, GetRandomRotation(false)));
+            }
+        }
+    }
+
     string GetRandomBlock()
     {
         string prefabPath = "Prefabs\\Blocks\\";
@@ -123,11 +148,19 @@ public class GameManager : MonoBehaviour
         return new Vector2(xPositions[randomXPosition], -2.5f);
     }
 
-    int GetRandomRotation()
+    int GetRandomRotation(bool isLongPiece)
     {
         int[] rotations = {0, 90, 180, 270};
+        int randomRotation = 0;
 
-        int randomRotation = Random.Range(0, 4);
+        if(isLongPiece)
+        {
+            randomRotation = Random.Range(0, 2);
+        }
+        else
+        {
+            randomRotation = Random.Range(0, 4);
+        }
 
         return rotations[randomRotation];
     }

@@ -6,6 +6,10 @@ public class Block : MonoBehaviour
 {
     public Vector2 startingPosition;
 
+    // these variables are set in Unity
+    public bool allowRotation;
+    public bool limitRotation;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +20,10 @@ public class Block : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("Calling update...");
+
+        // upon dragging and letting go of the block,
+        // have it automatically snap to the nearest valid spot on the grid
         if(Input.GetMouseButtonUp(0))
         {
             if(GameManager.gameManager.SnapToGrid(this))

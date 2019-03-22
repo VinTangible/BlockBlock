@@ -48,6 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingPosition: {x: 0, y: 0}
+  allowRotation: 1
+  limitRotation: 1
 --- !u!1001 &1812670065134163290
 PrefabInstance:
   m_ObjectHideFlags: 0
