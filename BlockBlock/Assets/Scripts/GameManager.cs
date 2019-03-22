@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // spawns a new block in the starting position of the recently placed block
     public void SpawnNextBlock(Vector2 startingPosition)
     {
         GameObject nextBlock = (GameObject)Instantiate(
@@ -44,6 +45,67 @@ public class GameManager : MonoBehaviour
         RotateBlock(nextBlock.GetComponentInParent<Block>());
     }
 
+    public void ClearRows()
+    {
+        for(int y = 0; y < gridHeight; ++y)
+        {
+            for(int x = 0; x < gridWidth; ++x)
+            {
+                if(grid[x, y] == null)
+                {
+                    // we've found an empty space
+                    break;
+                }
+
+                if(x == gridWidth - 1)
+                {
+                    ClearRowAt(y);
+                }
+            }
+        }
+    }
+
+    public void ClearColumns()
+    {
+        for(int x = 0; x < gridWidth; ++x)
+        {
+            for(int y = 0; y < gridHeight; ++y)
+            {
+                if(grid[x, y] == null)
+                {
+                    // we've found an empty space
+                    break;
+                }
+
+                if(y == gridHeight - 1)
+                {
+                    ClearColumnAt(x);
+                }
+            }
+        }
+    }
+    
+    public void ClearRowAt(int y)
+    {
+        for(int x = 0; x < gridWidth; ++x)
+        {
+            Destroy(grid[x, y].gameObject);
+            grid[x, y] = null;
+        }
+    }
+
+    public void ClearColumnAt(int x)
+    {
+        for(int y = 0; y < gridHeight; ++y)
+        {
+            Destroy(grid[x, y].gameObject);
+            grid[x, y] = null;
+        }
+    }
+
+    // upon letting go of the block, this function will round off
+    // the block's position to the nearest integer to snap it to
+    // the closest available grid space
     public bool SnapToGrid(Block block)
     {
         if(IsInsideGrid(block) && IsValidPlacement(block))
@@ -74,6 +136,7 @@ public class GameManager : MonoBehaviour
 
         // else, bring block back to original spawn position
         block.transform.position = block.startingPosition;
+
         return false;
     }
 
@@ -97,6 +160,7 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
+    // checks for occupied grid spaces of the current block's position
     public bool IsValidPlacement(Block block)
     {
         foreach(Transform blockPiece in block.transform)
@@ -141,6 +205,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // retrieves a random block prefab from the resources folder
     string GetRandomBlock()
     {
         string prefabPath = "Prefabs\\Blocks\\";
@@ -153,18 +218,7 @@ public class GameManager : MonoBehaviour
         return prefabPath + blocks[randomBlock];
     }
 
-    // Chooses a random starting position for each block.
-    // All of the starting positions have the same y value,
-    // so we're choosing pre-determined x values.
-    // Vector2 GetRandomStartPosition()
-    // {
-    //     float[] xPositions = {-3.5f, 1.5f, 5f, 11f};
-
-    //     int randomXPosition = Random.Range(0, 4);
-
-    //     return new Vector2(xPositions[randomXPosition], -2.5f);
-    // }
-
+    // returns a random rotation in increments of 90
     int GetRandomRotation(bool isLongPiece)
     {
         int[] rotations = {0, 90, 180, 270};
@@ -172,10 +226,12 @@ public class GameManager : MonoBehaviour
 
         if(isLongPiece)
         {
+            // long pieces only need to rotate 90 degrees
             randomRotation = Random.Range(0, 2);
         }
         else
         {
+            // the el pieces are allowed to freely rotate
             randomRotation = Random.Range(0, 4);
         }
 
