@@ -40,6 +40,8 @@ public class GameManager : MonoBehaviour
         GameObject nextBlock = (GameObject)Instantiate(
                     Resources.Load(GetRandomBlock(), typeof(GameObject)),
                         startingPosition, Quaternion.identity);
+        
+        nextBlock.transform.Rotate(new Vector3(0, 0, GetRandomRotation()));
     }
 
     public bool SnapToGrid(Block block)
@@ -119,5 +121,14 @@ public class GameManager : MonoBehaviour
         int randomXPosition = Random.Range(0, 4);
 
         return new Vector2(xPositions[randomXPosition], -2.5f);
+    }
+
+    int GetRandomRotation()
+    {
+        int[] rotations = {0, 90, 180, 270};
+
+        int randomRotation = Random.Range(0, 4);
+
+        return rotations[randomRotation];
     }
 }
