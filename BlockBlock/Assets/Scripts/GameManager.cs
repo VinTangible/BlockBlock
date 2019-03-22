@@ -53,20 +53,21 @@ public class GameManager : MonoBehaviour
                 // round the block's current position to the nearest integer
                 // to have it snap to the closest available grid space
                 Vector2 roundedPosition = Round(block.transform.position);
+                Vector2 roundedPiecePos = Round(blockPiece.transform.position);
 
                 // set the block's new position; this is where the snapping actually occurs
                 block.transform.position = roundedPosition;
 
                 // update the grid to fill in the now occupied space
-                grid[(int) roundedPosition.x, (int) roundedPosition.y] = block.transform;
+                grid[(int) roundedPiecePos.x, (int) roundedPiecePos.y] = blockPiece;
 
                 // disabling the BoxCollider2D component will disable dragging
                 blockPiece.GetComponent<BoxCollider2D>().enabled = false;
-
-                // disabling the Block component in the parent will disable Block's script.
-                // this prevents multiple blocks from spawning after this current block is placed
-                blockPiece.GetComponentInParent<Block>().enabled = false;
             }
+
+            // disabling the Block component will disable Block's script.
+            // this prevents multiple blocks from spawning after this current block is placed
+            block.enabled = false;
 
             return true;
         }
