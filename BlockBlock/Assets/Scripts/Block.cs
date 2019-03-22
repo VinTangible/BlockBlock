@@ -20,8 +20,6 @@ public class Block : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Calling update...");
-
         // upon dragging and letting go of the block,
         // have it automatically snap to the nearest valid spot on the grid
         if(Input.GetMouseButtonUp(0))

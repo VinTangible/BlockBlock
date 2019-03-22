@@ -46,15 +46,19 @@ public class GameManager : MonoBehaviour
 
     public bool SnapToGrid(Block block)
     {
-        Debug.Log("Snapping to grid...");
-
-        if(IsInsideGrid(block))
+        if(IsInsideGrid(block) && IsValidPlacement(block))
         {
             foreach(Transform blockPiece in block.transform)
             {
+                // round the block's current position to the nearest integer
+                // to have it snap to the closest available grid space
                 Vector2 roundedPosition = Round(block.transform.position);
 
+                // set the block's new position; this is where the snapping actually occurs
                 block.transform.position = roundedPosition;
+
+                // update the grid to fill in the now occupied space
+                grid[(int) roundedPosition.x, (int) roundedPosition.y] = block.transform;
 
                 // disabling the BoxCollider2D component will disable dragging
                 blockPiece.GetComponent<BoxCollider2D>().enabled = false;
@@ -76,13 +80,9 @@ public class GameManager : MonoBehaviour
     // all of its individual pieces and checking their positions
     public bool IsInsideGrid(Block block)
     {
-        int blockNum = 1;
         foreach(Transform blockPiece in block.transform)
         {
             Vector2 roundedPosition = Round(blockPiece.transform.position);
-
-            Debug.Log("Checking block " + blockNum);
-            Debug.Log("X: " + blockPiece.position.x + ", Y: " + blockPiece.position.y);
 
             if((int) roundedPosition.x < 0 ||
                (int) roundedPosition.x > gridWidth - 1 ||
@@ -91,10 +91,26 @@ public class GameManager : MonoBehaviour
             {
                 return false;
             }
-
-            ++blockNum;
         }
 
+        return true;
+    }
+
+    public bool IsValidPlacement(Block block)
+    {
+        foreach(Transform blockPiece in block.transform)
+        {
+            Vector2 roundedPiecePos = Round(blockPiece.position);
+
+            if(grid[(int) roundedPiecePos.x, (int) roundedPiecePos.y] != null)
+            {
+                // space is occupied
+                return false;
+            }
+        }
+
+        // we've checked all the block pieces' current position relative to the grid.
+        // those spaces are empty, so we're okay to place it down
         return true;
     }
 
@@ -139,14 +155,14 @@ public class GameManager : MonoBehaviour
     // Chooses a random starting position for each block.
     // All of the starting positions have the same y value,
     // so we're choosing pre-determined x values.
-    Vector2 GetRandomStartPosition()
-    {
-        float[] xPositions = {-3.5f, 1.5f, 5f, 11f};
+    // Vector2 GetRandomStartPosition()
+    // {
+    //     float[] xPositions = {-3.5f, 1.5f, 5f, 11f};
 
-        int randomXPosition = Random.Range(0, 4);
+    //     int randomXPosition = Random.Range(0, 4);
 
-        return new Vector2(xPositions[randomXPosition], -2.5f);
-    }
+    //     return new Vector2(xPositions[randomXPosition], -2.5f);
+    // }
 
     int GetRandomRotation(bool isLongPiece)
     {
