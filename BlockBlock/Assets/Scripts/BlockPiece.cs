@@ -13,7 +13,10 @@ public class BlockPiece : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(this.enabled == false)
+        {
+            Debug.Log("this is disabled");
+        }
     }
 
     void OnMouseDrag()
