@@ -26,9 +26,10 @@ public class Block : MonoBehaviour
         {
             if(GameManager.gameManager.SnapToGrid(this))
             {
-                GameManager.gameManager.ClearRows();
-                GameManager.gameManager.ClearColumns();
-                
+                GameManager.gameManager.CheckRows();
+                GameManager.gameManager.CheckColumns();
+                GameManager.gameManager.ClearRowsAndColumns();
+
                 // if block was successfully placed, spawn new block
                 GameManager.gameManager.SpawnNextBlock(startingPosition);
             }

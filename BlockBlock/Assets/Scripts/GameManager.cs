@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
 
     public static Transform[,] grid = new Transform[gridWidth, gridHeight];
 
+    public List<int> rowsToDelete;
+    public List<int> columnsToDelete;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,7 +48,23 @@ public class GameManager : MonoBehaviour
         RotateBlock(nextBlock.GetComponentInParent<Block>());
     }
 
-    public void ClearRows()
+    public void ClearRowsAndColumns()
+    {
+        foreach(int row in rowsToDelete)
+        {
+            ClearRowAt(row);
+        }
+
+        foreach(int column in columnsToDelete)
+        {
+            ClearColumnAt(column);
+        }
+
+        rowsToDelete.Clear();
+        columnsToDelete.Clear();
+    }
+
+    public void CheckRows()
     {
         for(int y = 0; y < gridHeight; ++y)
         {
@@ -59,13 +78,14 @@ public class GameManager : MonoBehaviour
 
                 if(x == gridWidth - 1)
                 {
-                    ClearRowAt(y);
+                    // mark this row for deletion
+                    rowsToDelete.Add(y);
                 }
             }
         }
     }
 
-    public void ClearColumns()
+    public void CheckColumns()
     {
         for(int x = 0; x < gridWidth; ++x)
         {
@@ -79,7 +99,8 @@ public class GameManager : MonoBehaviour
 
                 if(y == gridHeight - 1)
                 {
-                    ClearColumnAt(x);
+                    // mark this column for deletion
+                    columnsToDelete.Add(x);
                 }
             }
         }
@@ -89,8 +110,11 @@ public class GameManager : MonoBehaviour
     {
         for(int x = 0; x < gridWidth; ++x)
         {
-            Destroy(grid[x, y].gameObject);
-            grid[x, y] = null;
+            if(grid[x, y] != null)
+            {
+                Destroy(grid[x, y].gameObject);
+                grid[x, y] = null;
+            }
         }
     }
 
@@ -98,8 +122,11 @@ public class GameManager : MonoBehaviour
     {
         for(int y = 0; y < gridHeight; ++y)
         {
-            Destroy(grid[x, y].gameObject);
-            grid[x, y] = null;
+            if(grid[x, y] != null)
+            {
+                Destroy(grid[x, y].gameObject);
+                grid[x, y] = null;
+            }
         }
     }
 
