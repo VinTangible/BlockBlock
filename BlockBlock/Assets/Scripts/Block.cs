@@ -2,17 +2,41 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class Block : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    private Vector2 offset;
+
+    // Sets the sorting layer of the block's sprites based on passed in layer name
+    public void SetSortingLayer(string layerName)
+    {   
+        foreach (Transform child in transform)
+        {
+            SpriteRenderer sprite = child.GetComponent<SpriteRenderer>();
+            sprite.sortingOrder = SortingLayer.NameToID(layerName);
+            sprite.sortingLayerName = layerName;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    // Mouse Functions
+    void OnMouseDown()
     {
-        
+        // Calculate offset of the mouse position and starting position of parent when drag begins
+        offset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+
+        // Set layer of game object to "Up"
+        SetSortingLayer(GameManager.upLayer);
+    }
+
+    void OnMouseDrag()
+    {
+        Vector2 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        transform.position = newPosition - offset;
+    }
+
+    void OnMouseUp()
+    {
+        // When mouse is released, set the piece down and set sorting layer
+        SetSortingLayer(GameManager.downLayer);
+        GameManager.instance.DropPiece(this);
     }
 }
