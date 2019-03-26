@@ -24,7 +24,7 @@ public class Block : MonoBehaviour
         offset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
 
         // Set layer of game object to "Up"
-        SetSortingLayer(GameManager.upLayer);
+        SetSortingLayer(GameManager.UP_LAYER);
     }
 
     void OnMouseDrag()
@@ -36,7 +36,7 @@ public class Block : MonoBehaviour
     void OnMouseUp()
     {
         // When mouse is released, set the piece down and set sorting layer
-        SetSortingLayer(GameManager.downLayer);
-        GameManager.instance.DropPiece(this);
+        SetSortingLayer(GameManager.DOWN_LAYER);
+        GameManager.instance.DropPiece(gameObject);
     }
 }
