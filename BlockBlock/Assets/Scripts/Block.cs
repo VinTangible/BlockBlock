@@ -7,9 +7,12 @@ public class Block : MonoBehaviour
     public bool allowRotation;
     public bool limitRotation;
 
+    Vector2 spawnPosition;
+
     // Start is called before the first frame update
     void Start()
     {
+        spawnPosition = FindObjectOfType<GameManager>().GetInitialBlockPos();
     }
 
     // Update is called once per frame
@@ -19,7 +22,7 @@ public class Block : MonoBehaviour
         {
             if(SnapToGrid())
             {
-                FindObjectOfType<GameManager>().SpawnBlock();
+                SpawnNextBlock(spawnPosition);
             }
         }
     }
@@ -66,6 +69,41 @@ public class Block : MonoBehaviour
 
             return true;
         }
+
+        //revert to spawn position once it is not valid position
+        transform.position = spawnPosition;
         return false;
+    }
+
+    void SpawnNextBlock(Vector2 pos)
+    {
+        //Debug.Log("I AM HERE");
+        GameObject[] blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
+        GameObject block = blocks[Random.Range(0, blocks.Length)];
+        GameObject nextBlock = (GameObject)Instantiate(block, pos, Quaternion.identity);
+
+        RotateBlock(nextBlock.GetComponentInParent<Transform>());
+
+    }
+
+    void RotateBlock(Transform block)
+    {
+        int[] allowDegree = { 0, 90, 180, 270 };
+        int[] limitDegree = {0, 90};
+        int randomIndex = 0;
+
+        if(allowRotation && limitRotation)
+        {
+
+            randomIndex = Random.Range(0, limitDegree.Length);
+            block.Rotate(0, 0, limitDegree[randomIndex]);
+            //Debug.Log("limit " + limitDegree[randomIndex]);
+        }
+        else if(allowRotation)
+        {
+            randomIndex = Random.Range(0, allowDegree.Length);
+            block.Rotate(0, 0, allowDegree[randomIndex]);
+            //Debug.Log("allow " + allowDegree[randomIndex]);
+        }
     }
 }

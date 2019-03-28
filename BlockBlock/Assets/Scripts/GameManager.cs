@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
         return ((int)pos.y < gridHeight && (int)pos.y >= 0 && (int)pos.x < gridWidth && (int)pos.x >= 0);
     }
 
+    //Getters
     public Transform GetTransformAtGridPos(Vector2 pos)
     {
         if (!CheckIsInsideGrid(pos))
@@ -79,8 +80,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public Vector2 GetInitialBlockPos()
+    {
+        return spawnPosition;
+    }
+
+    //Setters
     public void SetGridPos(Vector2 pos, Transform blockPiece)
     {
         grid[(int)pos.x, (int)pos.y] = blockPiece;
     }
+
 }
