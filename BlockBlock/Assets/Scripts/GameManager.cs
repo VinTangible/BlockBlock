@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
 
     // Private Functions
 
-    private void SpawnBlock()
+    public void SpawnBlock()
     {
         // Get a random block
         GameObject block = blocks[Random.Range(0, blocks.Length)];

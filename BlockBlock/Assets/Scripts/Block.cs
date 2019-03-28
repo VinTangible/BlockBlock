@@ -4,16 +4,24 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
+    public bool allowRotation;
+    public bool limitRotation;
+
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
     void Update()
     {
-        //SnapToGrid();
+        if (Input.GetMouseButtonUp(0))
+        {
+            if(SnapToGrid())
+            {
+                FindObjectOfType<GameManager>().SpawnBlock();
+            }
+        }
     }
 
     bool CheckIsValidPosition()
@@ -37,7 +45,7 @@ public class Block : MonoBehaviour
         return true;
     }
 
-    public bool SnapToGrid()
+    bool SnapToGrid()
     {
         if (CheckIsValidPosition())
         {
@@ -50,7 +58,12 @@ public class Block : MonoBehaviour
 
                 FindObjectOfType<GameManager>().SetGridPos(blockGridPos, blockPiece);
 
+                blockPiece.GetComponent<BoxCollider2D>().enabled = false;    
+
             }
+
+            enabled = false;
+
             return true;
         }
         return false;

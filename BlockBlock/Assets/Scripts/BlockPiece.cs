@@ -24,10 +24,10 @@ public class BlockPiece : MonoBehaviour
         offset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.parent.position;
     }
 
-    void OnMouseUp()
-    {
-        FindObjectOfType<Block>().SnapToGrid();
-    }
+    //void OnMouseUp()
+    //{
+    //    FindObjectOfType<Block>().SnapToGrid();
+    //}
 
     void OnMouseDrag()
     {
