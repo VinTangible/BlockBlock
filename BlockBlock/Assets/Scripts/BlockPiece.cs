@@ -24,24 +24,14 @@ public class BlockPiece : MonoBehaviour
         offset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.parent.position;
     }
 
+    void OnMouseUp()
+    {
+        FindObjectOfType<Block>().SnapToGrid();
+    }
+
     void OnMouseDrag()
     {
         Vector2 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         transform.parent.position = newPosition - offset;
-    }
-
-    bool CheckIsValidPosition()
-    {
-        foreach (Transform blockPiece in transform)
-        {
-            Vector2 pos = FindObjectOfType<GameManager>().Round(blockPiece.position);
-
-            if (FindObjectOfType<GameManager>().CheckIsInsideGrid(pos) == false)
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
     Vector2 spawnPosition;
     GameObject[] blocks;
 
+    //public static GameManager gameManager = null;
+
     public static int gridWidth = 10;
     public static int gridHeight = 10;
 
@@ -48,7 +50,7 @@ public class GameManager : MonoBehaviour
         {
             Vector2 pos = Round(blockPiece.position);
 
-            if(pos.y < gridHeight && pos.y > 0 && pos.x < gridWidth && pos.x > 0)
+            if(CheckIsInsideGrid(pos))
             {
                 grid[(int)pos.x, (int)pos.y] = blockPiece;
             }
@@ -63,5 +65,22 @@ public class GameManager : MonoBehaviour
     public bool CheckIsInsideGrid(Vector2 pos)
     {
         return ((int)pos.y < gridHeight && (int)pos.y >= 0 && (int)pos.x < gridWidth && (int)pos.x >= 0);
+    }
+
+    public Transform GetTransformAtGridPos(Vector2 pos)
+    {
+        if (!CheckIsInsideGrid(pos))
+        {
+            return null;
+        }
+        else
+        {
+            return grid[(int)pos.x, (int)pos.y];
+        }
+    }
+
+    public void SetGridPos(Vector2 pos, Transform blockPiece)
+    {
+        grid[(int)pos.x, (int)pos.y] = blockPiece;
     }
 }
