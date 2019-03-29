@@ -213,7 +213,7 @@ public class Block : MonoBehaviour
             for(int row = 0; row < gridWidth; row++)
             {
                 //Debug.Log("row is " + row + " gridwidth is" + gridWidth);
-                Debug.Log(row +". el is " + el + " grid[row,ell] is " + grid[row, el]);
+                //Debug.Log(row +". el is " + el + " grid[row,ell] is " + grid[row, el]);
                 Destroy(grid[row, el].gameObject);
                 grid[row, el] = null;
             }
@@ -227,7 +227,7 @@ public class Block : MonoBehaviour
             for (int col = 0; col < gridHeight; col++)
             {
                 //Debug.Log("col is " + col + " gridHeight is" + gridHeight);
-                Debug.Log(col + ". el is " + el + " grid[el,col] is " + grid[el, col]);
+                //Debug.Log(col + ". el is " + el + " grid[el,col] is " + grid[el, col]);
                 Destroy(grid[el, col].gameObject);
                 grid[el, col] = null;
             }
@@ -235,7 +235,7 @@ public class Block : MonoBehaviour
             //fullColArr.Remove(el);
         }
 
-        foreach (int el in fullRowArr)
+  /*      foreach (int el in fullRowArr)
         {
             fullRowArr.Remove(el);
         }
@@ -243,7 +243,7 @@ public class Block : MonoBehaviour
         foreach (int el in fullColArr)
         {
             fullColArr.Remove(el);
-        }
+        }*/
     }
 
     //Block Spawn
