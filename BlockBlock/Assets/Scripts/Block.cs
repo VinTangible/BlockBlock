@@ -10,6 +10,9 @@ public class Block : MonoBehaviour
     int gridHeight = 0;
     int gridWidth = 0;
 
+    List<int> fullRowArr = new List<int>();
+    List<int> fullColArr = new List<int>();
+
     Vector2 spawnPosition;
 
     // Start is called before the first frame update
@@ -28,6 +31,7 @@ public class Block : MonoBehaviour
         {
             if(SnapToGrid())
             {
+                clearRowCol();
                 SpawnNextBlock(spawnPosition);
             }
         }
@@ -67,7 +71,7 @@ public class Block : MonoBehaviour
                 transform.position = newBlockPos;
 
                 FindObjectOfType<GameManager>().SetGridPos(blockGridPos, blockPiece);
-
+                
                 blockPiece.GetComponent<BoxCollider2D>().enabled = false;    
 
             }
@@ -163,9 +167,45 @@ public class Block : MonoBehaviour
         }
     }*/
 
-    void ClearCol()
+    void addingFullRows()
     {
-        for()
+        for (int row = 0; row < gridWidth; row++)
+        {
+            for (int col = 0; col < gridHeight; col++)
+            {
+                if (isFullRowAt(col))
+                {
+                    fullRowArr.Add(col);
+                }
+                else if (isFullColAt(row))
+                {
+                    fullColArr.Add(row);
+                }
+            }
+        }
+    }
+
+    void clearRowCol()
+    {
+        foreach(int el in fullRowArr)
+        {
+            for(int row = 0; row < gridHeight; row++)
+            {
+                Destroy(grid[row, el].gameObject);
+                grid[row, el] = null;
+            }
+            fullRowArr.Remove(el);
+        }
+
+        foreach (int el in fullColArr)
+        {
+            for (int col = 0; col < gridHeight; col++)
+            {
+                Destroy(grid[el, col].gameObject);
+                grid[el, col] = null;
+            }
+            fullRowArr.Remove(el);
+        }
     }
 
     //Block Spawn
