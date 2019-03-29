@@ -85,6 +85,21 @@ public class GameManager : MonoBehaviour
         return spawnPosition;
     }
 
+    public Transform[,] GetGrid()
+    {
+        return grid;
+    }
+
+    public int GetGridWidth()
+    {
+        return gridWidth;
+    }
+
+    public int GetGridHeight()
+    {
+        return gridHeight;
+    }
+
     //Setters
     public void SetGridPos(Vector2 pos, Transform blockPiece)
     {
