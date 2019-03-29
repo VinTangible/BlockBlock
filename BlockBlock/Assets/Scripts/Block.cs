@@ -31,7 +31,8 @@ public class Block : MonoBehaviour
         {
             if(SnapToGrid())
             {
-                clearRowCol();
+                AddingFullRows();
+                ClearRowCol();
                 SpawnNextBlock(spawnPosition);
             }
         }
@@ -167,9 +168,9 @@ public class Block : MonoBehaviour
         }
     }*/
 
-    void addingFullRows()
+    void AddingFullRows()
     {
-        for (int row = 0; row < gridWidth; row++)
+        /*for (int row = 0; row < gridWidth; row++)
         {
             for (int col = 0; col < gridHeight; col++)
             {
@@ -182,29 +183,66 @@ public class Block : MonoBehaviour
                     fullColArr.Add(row);
                 }
             }
+        }*/
+
+        for(int row = 0; row < gridWidth; row++)
+        {
+            if (isFullColAt(row))
+            {
+                fullColArr.Add(row);
+            }
+        }
+
+        for(int col = 0; col < gridHeight; col++)
+        {
+            if (isFullRowAt(col))
+            {
+                fullRowArr.Add(col);
+            }
         }
     }
 
-    void clearRowCol()
+    void ClearRowCol()
     {
+        //Can't manipulate data structure at the same time as transversing
+        //Gives Error
+
         foreach(int el in fullRowArr)
         {
-            for(int row = 0; row < gridHeight; row++)
+            Debug.Log(el + " " + fullRowArr);
+            for(int row = 0; row < gridWidth; row++)
             {
+                //Debug.Log("row is " + row + " gridwidth is" + gridWidth);
+                Debug.Log(row +". el is " + el + " grid[row,ell] is " + grid[row, el]);
                 Destroy(grid[row, el].gameObject);
                 grid[row, el] = null;
             }
+            
+            //fullRowArr.Remove(el);
+        }
+
+        foreach (int el in fullColArr)
+        {
+            Debug.Log(el + " " + fullColArr);
+            for (int col = 0; col < gridHeight; col++)
+            {
+                //Debug.Log("col is " + col + " gridHeight is" + gridHeight);
+                Debug.Log(col + ". el is " + el + " grid[el,col] is " + grid[el, col]);
+                Destroy(grid[el, col].gameObject);
+                grid[el, col] = null;
+            }
+            
+            //fullColArr.Remove(el);
+        }
+
+        foreach (int el in fullRowArr)
+        {
             fullRowArr.Remove(el);
         }
 
         foreach (int el in fullColArr)
         {
-            for (int col = 0; col < gridHeight; col++)
-            {
-                Destroy(grid[el, col].gameObject);
-                grid[el, col] = null;
-            }
-            fullRowArr.Remove(el);
+            fullColArr.Remove(el);
         }
     }
 
