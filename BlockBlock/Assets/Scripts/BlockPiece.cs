@@ -18,7 +18,7 @@ public class BlockPiece : MonoBehaviour
         
     }
 
-     void OnMouseDown()
+    void OnMouseDown()
     {
         // Calculate offset of the mouse position and starting position of parent when drag begins
         offset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.parent.position;
@@ -29,4 +29,12 @@ public class BlockPiece : MonoBehaviour
         Vector2 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         transform.parent.position = newPosition - offset;
     }
+
+    void OnDestroy()
+    {
+        // Destroy parent block if this is the last piece left to destroy
+        if (transform.parent != null && transform.parent.childCount <= 1) {
+            Destroy(transform.parent.gameObject);
+        }
+    }    
 }
