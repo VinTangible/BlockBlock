@@ -33,7 +33,8 @@ public class GameManager : MonoBehaviour
 
     // Private Functions
 
-    public void SpawnBlock()
+    //Spawns Initial Blocks
+    private void SpawnBlock()
     {
         // Get a random block
         GameObject block = blocks[Random.Range(0, blocks.Length)];
@@ -44,6 +45,8 @@ public class GameManager : MonoBehaviour
 
 
     //Public Functions
+
+    //Updates the grid on which positions in the grid are filled
     public void UpdateGrid(BlockPiece block)
     {
         foreach(Transform blockPiece in block.transform)
@@ -57,17 +60,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Round the position of the block
     public Vector2 Round (Vector2 pos)
     {
         return new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
     }
 
+    //Check if the block is inside the grid
     public bool CheckIsInsideGrid(Vector2 pos)
     {
         return ((int)pos.y < gridHeight && (int)pos.y >= 0 && (int)pos.x < gridWidth && (int)pos.x >= 0);
     }
 
     //Getters
+    //Get the transform block at a certain location
     public Transform GetTransformAtGridPos(Vector2 pos)
     {
         if (!CheckIsInsideGrid(pos))
@@ -80,27 +86,32 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Get the Initial Block Position
     public Vector2 GetInitialBlockPos()
     {
         return spawnPosition;
     }
 
+    //Get the Grid 
     public Transform[,] GetGrid()
     {
         return grid;
     }
 
+    //Get the grid width
     public int GetGridWidth()
     {
         return gridWidth;
     }
 
+    //Get the grid height
     public int GetGridHeight()
     {
         return gridHeight;
     }
 
     //Setters
+    //Set the grid position
     public void SetGridPos(Vector2 pos, Transform blockPiece)
     {
         grid[(int)pos.x, (int)pos.y] = blockPiece;
