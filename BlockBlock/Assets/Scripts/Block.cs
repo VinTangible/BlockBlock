@@ -39,17 +39,21 @@ public class Block : MonoBehaviour
     }
 
     //Grid Snapping
+    //Checks if the current piece is inside the grid 
+    //and is not conflicting with an existing block
     bool CheckIsValidPosition()
     {
         foreach (Transform blockPiece in transform)
         {
             Vector2 pos = FindObjectOfType<GameManager>().Round(blockPiece.position);
 
+            //Checks inside the grid
             if (FindObjectOfType<GameManager>().CheckIsInsideGrid(pos) == false)
             {
                 return false;
             }
 
+            //Checks if the current place in the grid is empty or not
             if (FindObjectOfType<GameManager>().GetTransformAtGridPos(pos) != null &&
                 FindObjectOfType<GameManager>().GetTransformAtGridPos(pos).parent != transform)
             {
@@ -60,6 +64,9 @@ public class Block : MonoBehaviour
         return true;
     }
 
+    //Snaps to the grid if it is a valid position
+    //Returns true if it snaps
+    //Returns false if it doesn't snaps
     bool SnapToGrid()
     {
         if (CheckIsValidPosition())
@@ -89,41 +96,10 @@ public class Block : MonoBehaviour
 
     //Clearing Rows and Columns
 
-    //Check for both full row and col
-    bool isFullRowColAt(int x, int y)
-    {
-        //Transform[,] grid = FindObjectOfType<GameManager>().GetGrid();
-        //int gridHeight = FindObjectOfType<GameManager>().GetGridHeight();
-        //int gridWidth = FindObjectOfType<GameManager>().GetGridWidth();
-
-        //Check for both row and col
-        //If either of it is null, return false;
-        for(int row = 0; row <  gridWidth; row++)
-        {
-            if(grid[row, y] == null)
-            {
-                return false;
-            }
-      
-            for(int col = 0; col < gridHeight; col++)
-            {
-                if(grid[x, col] == null)
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
     //Checking full row
+    //Returns true if the row is full
     bool isFullRowAt(int y)
     {
-        //Transform[,] grid = FindObjectOfType<GameManager>().GetGrid();
-        //int gridHeight = FindObjectOfType<GameManager>().GetGridHeight();
-        //int gridWidth = FindObjectOfType<GameManager>().GetGridWidth();
-
         for(int row = 0; row < gridWidth; row++)
         {
             if(grid[row , y] == null)
@@ -135,9 +111,9 @@ public class Block : MonoBehaviour
     }
 
     //Checking full col
+    //Return true if the current column is full
     bool isFullColAt(int x)
     {
-
         for(int col = 0; col < gridHeight; col++)
         {
             if(grid[x, col] == null)
@@ -148,43 +124,11 @@ public class Block : MonoBehaviour
         return true;
     }
 
-    //Clearing rows/col
-    /*void ClearRowsCol()
-    {
-        for(int row = 0; row < gridWidth; row++)
-        {
-            for(int col = 0; col < gridHeight; col++)
-            {
-                if(isFullRowColAt(row, col))
-                {
-                    Destroy(grid[row, col].gameObject);
-                    grid[row, col] = null;
-                }
-                else if (isFullRowAt(col))
-                {
-                    Destroy(grid[])
-                }
-            }
-        }
-    }*/
-
+    //Adds the row number and col number into a list if that
+    //row or column if full
     void AddingFullRows()
     {
-        /*for (int row = 0; row < gridWidth; row++)
-        {
-            for (int col = 0; col < gridHeight; col++)
-            {
-                if (isFullRowAt(col))
-                {
-                    fullRowArr.Add(col);
-                }
-                else if (isFullColAt(row))
-                {
-                    fullColArr.Add(row);
-                }
-            }
-        }*/
-
+        //Adding row number into list
         for(int row = 0; row < gridWidth; row++)
         {
             if (isFullColAt(row))
@@ -193,6 +137,7 @@ public class Block : MonoBehaviour
             }
         }
 
+        //Adding col number into list
         for(int col = 0; col < gridHeight; col++)
         {
             if (isFullRowAt(col))
@@ -202,6 +147,8 @@ public class Block : MonoBehaviour
         }
     }
 
+    //Go through each row and column number in the list
+    //and destroying and deleting the blocks from the grid 
     void ClearRowCol()
     {
         //Can't manipulate data structure at the same time as transversing
@@ -209,11 +156,9 @@ public class Block : MonoBehaviour
 
         foreach(int el in fullRowArr)
         {
-            Debug.Log(el + " " + fullRowArr);
+            //Debug.Log(el + " " + fullRowArr);
             for(int row = 0; row < gridWidth; row++)
             {
-                //Debug.Log("row is " + row + " gridwidth is" + gridWidth);
-                //Debug.Log(row +". el is " + el + " grid[row,ell] is " + grid[row, el]);
                 Destroy(grid[row, el].gameObject);
                 grid[row, el] = null;
             }
@@ -226,8 +171,6 @@ public class Block : MonoBehaviour
             Debug.Log(el + " " + fullColArr);
             for (int col = 0; col < gridHeight; col++)
             {
-                //Debug.Log("col is " + col + " gridHeight is" + gridHeight);
-                //Debug.Log(col + ". el is " + el + " grid[el,col] is " + grid[el, col]);
                 Destroy(grid[el, col].gameObject);
                 grid[el, col] = null;
             }
@@ -247,6 +190,7 @@ public class Block : MonoBehaviour
     }
 
     //Block Spawn
+    //Spawns the next block and rotates it (different combinations of blocks)
     void SpawnNextBlock(Vector2 pos)
     {
         //Debug.Log("I AM HERE");
@@ -258,6 +202,7 @@ public class Block : MonoBehaviour
 
     }
 
+    //Rotate block (Different combinations)
     void RotateBlock(Transform block)
     {
         int[] allowDegree = { 0, 90, 180, 270 };
