@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    //private Vector2 offset;
+    private Vector2 offset;
     public bool allowRotation = true;
     
     // Start is called before the first frame update
@@ -14,29 +14,21 @@ public class Block : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
+    void Update(){
+
     }
-/*
-    void OnMouseDown()
-    {
+
+    void OnMouseDown(){
         // Calculate offset of the mouse position and starting position of parent when drag begins
         offset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
     }
 
-    void OnMouseDrag()
-    {
+    void OnMouseDrag(){
         Vector2 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         transform.position = newPosition - offset;
     }
 
-    void OnDestroy()
-    {
-        // Destroy parent block if this is the last piece left to destroy
-        if (transform != null && transform.childCount <= 1) {
-            Destroy(transform.gameObject);
-        }
+    void OnMouseUp(){
+        GameManager.manager.SnapToGrid(this);
     }
-    */
 }

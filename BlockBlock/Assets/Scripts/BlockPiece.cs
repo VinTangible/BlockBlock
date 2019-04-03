@@ -15,10 +15,13 @@ public class BlockPiece : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    void OnMouseDown()
+   /* 
+    CODE MOVED TO BLOCK.CS
+
+   void OnMouseDown()
     {
         // Calculate offset of the mouse position and starting position of parent when drag begins
         offset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.parent.position;
@@ -28,7 +31,12 @@ public class BlockPiece : MonoBehaviour
     {
         Vector2 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         transform.parent.position = newPosition - offset;
+    } 
+
+    void OnMouseUp(){
+        GameManager.manager.SnapToGrid(gameObject);
     }
+    */
 
     void OnDestroy()
     {

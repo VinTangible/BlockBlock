@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6691283908634515022}
   - component: {fileID: 6654502066430955521}
+  - component: {fileID: 4665721625265053653}
   m_Layer: 0
   m_Name: Square3
   m_TagString: Untagged
@@ -52,7 +53,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bf30ffcf2336724da82ec4ad6e30afd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allowRotation: 1
+  allowRotation: 0
+--- !u!61 &4665721625265053653
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2499220536660099592}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 1, y: 1}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 3, y: 3}
+  m_EdgeRadius: 0
 --- !u!1001 &1117759689987913438
 PrefabInstance:
   m_ObjectHideFlags: 0

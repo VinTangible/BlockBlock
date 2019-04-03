@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     //holds occupied/null grid positions
     public static Transform[,] grid = new Transform[GRID_WIDTH,GRID_HEIGHT];
 
+    public static GameManager manager = null;
 
     // Start is called before the first frame update
     void Start()
@@ -31,11 +32,24 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    // Private Functions
+    void Awake(){
+        //create static singleton instance of game manager to be called in other scripts
+        if(manager == null){
+            manager = this;
+        }
+        //if manager is not equal to current instance of gameManager, then destroy it
+        else if(manager != this){
+            Destroy(gameObject);
+        }
+    }
 
+    /*
+    Description: Spawns new block
+    Where Called: Start(), SnapToGrid()
+     */
     private void SpawnBlock()
     {
         // Get a random block
@@ -45,35 +59,79 @@ public class GameManager : MonoBehaviour
         GameObject toSpawn = Instantiate(block, spawnPosition, Quaternion.identity);
     }
 
-    /* If block is inside grid, returns true */
-    private bool IsInsideGrid(Vector2 pos){
+    /* 
+    Description: If entire block (all block pieces) is inside grid, returns true.
+    Where Called: IsValidPosition()
+    */
+    private bool IsInsideGrid(Block block){
         //checks if block is within the grid
-        return ((int)pos.x >= 0 && (int)pos.x < GRID_WIDTH && (int)pos.y >= 0 && (int)pos.y < GRID_HEIGHT);
-    }
-
-   private bool IsValidPosition(GameObject block){
-        //iterates through each transform(individual block pieces) and check if it is in a valid position 
-        //(e.g. inside grid and not overlapping another piece)
         foreach(Transform blockPiece in block.transform){
             Vector2 pos = Round(blockPiece.position);
 
-            //checks if inside grid and grid position is not occupied
-            if(IsInsideGrid(pos) && grid[(int)pos.x,(int)pos.y] == null){
-                return true;
+            if(pos.x < 0 || pos.x >= GRID_WIDTH || pos.y < 0 || pos.y >= GRID_HEIGHT){
+                //Debug.Log("IsInsideGrid returned FALSE");
+                return false;
             }
         }
-        return false;
+        //Debug.Log("IsInsideGrid returned TRUE");
+        return true;
     }
 
-    /* Rounds block x/y position and returns Vector2 */
+    /*
+    Description: Checks if block position is valid (e.g. grid spot is empty)
+    Where Called: SnapToGrid()
+    */
+   private bool IsValidPosition(Block block){
+       //iterates through each transform(individual block pieces) and check if it is in a valid position 
+       foreach(Transform blockPiece in block.transform){
+           Vector2 pos = Round(blockPiece.position);
+           //checks if grid position is not occupied
+           if(grid[(int)pos.x,(int)pos.y] != null){
+               //Debug.Log("IsValidPosition returned FALSE");
+               return false;
+               }
+        }
+        //Debug.Log("IsValidPosition returned TRUE");
+        return true;
+    }
+
+    /* 
+    Description: Rounds block x/y position and returns Vector2 
+    Where Called: IsInsideGrid(), IsValidPosition(), SnapToGrid(), UpdateGrid()
+    */
     public Vector2 Round(Vector2 pos){
         //Rounds block piece position
         return new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
     }
 
-    /* snaps block to grid */
-    private void SnapToGrid(){
+    /* 
+    Description: Snaps block to grid
+    Where Called: Block.cs -> OnMouseUp()
+    */
+    public void SnapToGrid(Block block){
+        //checks if block is inside grid. If it isn't, then reset to spawn location
+        if(IsInsideGrid(block) && IsValidPosition(block)){
+            block.transform.position = Round(block.transform.position);
+            UpdateGrid(block);
+            SpawnBlock();
+        }
+        else{
+            block.transform.position = spawnPosition;
+        }
+    }
 
+    /*
+    Description: updates grid to keep track of which spots are filled.
+    Where Called: SnapToGrid()
+     */
+    public void UpdateGrid(Block block){
+        //finds position for each block piece within block. Updates grid to hold block piece. 
+        foreach(Transform blockPiece in block.transform){
+            Vector2 pos = Round(blockPiece.position);
+
+            grid[(int)pos.x,(int)pos.y] = blockPiece;
+            //Debug.Log("grid[" + blockPiece.position.x + "," + blockPiece.position.y + "] updated.");
+        }
     }
 
     private void CheckRows(){
