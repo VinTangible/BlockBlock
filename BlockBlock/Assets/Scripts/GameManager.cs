@@ -5,6 +5,9 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     Vector2 spawnPosition;
+    Vector2 spawnPosition2;
+    Vector2 spawnPosition3;
+
     GameObject[] blocks;
 
     //public static GameManager gameManager = null;
@@ -18,11 +21,17 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         // Currently spawn position is at 75% screen width, and 50% screen height
-        spawnPosition = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
-        spawnPosition.Scale(new Vector2((float).75, (float).5));
+        //spawnPosition = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
+        //spawnPosition.Scale(new Vector2((float).75, (float).5));
+        spawnPosition = new Vector2(-2, (float) -3.5);
+        spawnPosition2 = new Vector2(4, (float) -3.5);
+        spawnPosition3 = new Vector2(9, (float) -3.5);
+        
         blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
 
-        SpawnBlock();
+        SpawnBlock(spawnPosition);
+        SpawnBlock(spawnPosition2);
+        SpawnBlock(spawnPosition3);
     }
 
     // Update is called once per frame
@@ -34,13 +43,13 @@ public class GameManager : MonoBehaviour
     // Private Functions
 
     //Spawns Initial Blocks
-    private void SpawnBlock()
+    private void SpawnBlock(Vector2 pos)
     {
         // Get a random block
         GameObject block = blocks[Random.Range(0, blocks.Length)];
 
         // Spawn the block at the spawn position
-        GameObject toSpawn = Instantiate(block, spawnPosition, Quaternion.identity);
+        GameObject toSpawn = Instantiate(block, pos, Quaternion.identity);
     }
 
 
