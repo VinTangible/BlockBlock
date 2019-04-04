@@ -165,8 +165,6 @@ public class Block : MonoBehaviour
                 grid[row, el] = null;
               }
             }
-            
-            //fullRowArr.Remove(el);
         }
 
         foreach (int el in fullColArr)
@@ -180,19 +178,8 @@ public class Block : MonoBehaviour
                 grid[el, col] = null;
               }
             }
-            
-            //fullColArr.Remove(el);
         }
 
-  /*      foreach (int el in fullRowArr)
-        {
-            fullRowArr.Remove(el);
-        }
-
-        foreach (int el in fullColArr)
-        {
-            fullColArr.Remove(el);
-        }*/
     }
 
     //Block Spawn
