@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BlockPiece : MonoBehaviour
 {
-    private Vector2 offset;
+    //private Vector2 offset;
 
     // Start is called before the first frame update
     void Start()

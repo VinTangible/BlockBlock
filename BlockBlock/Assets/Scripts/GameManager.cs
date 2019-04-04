@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
 {
     Vector2 spawnPosition;
     //holds all types of blocks that can be spawned
-    GameObject[] blocks;
+    Block[] blocks;
 
     public static int GRID_WIDTH = 10;
     public static int GRID_HEIGHT = 10;
@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     public bool[] rowsToDelete = new bool[GRID_HEIGHT];
     public bool[] colToDelete = new bool[GRID_WIDTH];
 
-    public static string path = "Prefabs/Blocks";
+    public static string prefabPath = "Prefabs/Blocks";
 
     //holds occupied/null grid positions
     public static Transform[,] grid = new Transform[GRID_WIDTH,GRID_HEIGHT];
@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
         spawnPosition.Scale(new Vector2((float).75, (float).5));
 
         //holds all different block types to be spawned
-        blocks = Resources.LoadAll<GameObject>(path);
+        blocks = Resources.LoadAll<Block>(prefabPath);
 
         SpawnBlock();
     }
@@ -58,10 +58,28 @@ public class GameManager : MonoBehaviour
     private void SpawnBlock()
     {
         // Get a random block
-        GameObject block = blocks[7]; //blocks[Random.Range(0, blocks.Length)];
+        Block block = blocks[Random.Range(0, blocks.Length)];
 
         // Spawn the block at the spawn position
-        GameObject toSpawn = Instantiate(block, spawnPosition, Quaternion.identity);
+        Block toSpawn = Instantiate(block, spawnPosition, Quaternion.identity);
+
+/* How do I rotate using a function? Function would only rotate the shallow copy of the block. How to rotate the original copy?*/
+        //checks if block can rotate
+        if(toSpawn.allowRotation){
+            //rotate spawned block
+            toSpawn.transform.Rotate(0,0,getRotationVal());
+        }
+    }
+
+    /*
+    Description: Gets value to rotate block
+    Where Called: SpawnBlock()
+     */
+    private int getRotationVal(){
+        //declare array to hold possible rotations
+        int[] rotationValues = {0,90,180,270};
+
+        return rotationValues[Random.Range(0,rotationValues.Length)];
     }
 
     /* 
@@ -117,6 +135,10 @@ public class GameManager : MonoBehaviour
         //checks if block is inside grid. If it isn't, then reset to spawn location
         if(IsInsideGrid(block) && IsValidPosition(block)){
             block.transform.position = Round(block.transform.position);
+
+            //disables dropped block (prevents movement)
+            block.GetComponent<BoxCollider2D>().enabled = false;
+            
             UpdateGrid(block);
             SpawnBlock();
         }
