@@ -147,6 +147,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2729090119130088355, guid: c82f538cd5d514ca1b643dec88105dfd,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c82f538cd5d514ca1b643dec88105dfd, type: 3}
 --- !u!4 &1215570193452705622 stripped
@@ -220,6 +225,11 @@ PrefabInstance:
     - target: {fileID: 2260110071242936712, guid: c82f538cd5d514ca1b643dec88105dfd,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2729090119130088355, guid: c82f538cd5d514ca1b643dec88105dfd,
+        type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -297,6 +307,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2729090119130088355, guid: c82f538cd5d514ca1b643dec88105dfd,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c82f538cd5d514ca1b643dec88105dfd, type: 3}
 --- !u!4 &3118050759209464151 stripped
@@ -370,6 +385,11 @@ PrefabInstance:
     - target: {fileID: 2260110071242936712, guid: c82f538cd5d514ca1b643dec88105dfd,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2729090119130088355, guid: c82f538cd5d514ca1b643dec88105dfd,
+        type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -447,6 +467,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2729090119130088355, guid: c82f538cd5d514ca1b643dec88105dfd,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c82f538cd5d514ca1b643dec88105dfd, type: 3}
 --- !u!4 &2534129912063125407 stripped
@@ -520,6 +545,11 @@ PrefabInstance:
     - target: {fileID: 2260110071242936712, guid: c82f538cd5d514ca1b643dec88105dfd,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2729090119130088355, guid: c82f538cd5d514ca1b643dec88105dfd,
+        type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -597,6 +627,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2729090119130088355, guid: c82f538cd5d514ca1b643dec88105dfd,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c82f538cd5d514ca1b643dec88105dfd, type: 3}
 --- !u!4 &5466332662582186380 stripped
@@ -672,6 +707,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2729090119130088355, guid: c82f538cd5d514ca1b643dec88105dfd,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c82f538cd5d514ca1b643dec88105dfd, type: 3}
 --- !u!4 &5371656379719814963 stripped
@@ -745,6 +785,11 @@ PrefabInstance:
     - target: {fileID: 2260110071242936712, guid: c82f538cd5d514ca1b643dec88105dfd,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2729090119130088355, guid: c82f538cd5d514ca1b643dec88105dfd,
+        type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

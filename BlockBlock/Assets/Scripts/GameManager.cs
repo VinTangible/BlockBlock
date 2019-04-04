@@ -11,6 +11,11 @@ public class GameManager : MonoBehaviour
     public static int GRID_WIDTH = 10;
     public static int GRID_HEIGHT = 10;
 
+    public bool[] rowsToDelete = new bool[GRID_HEIGHT];
+    public bool[] colToDelete = new bool[GRID_WIDTH];
+
+    public static string path = "Prefabs/Blocks";
+
     //holds occupied/null grid positions
     public static Transform[,] grid = new Transform[GRID_WIDTH,GRID_HEIGHT];
 
@@ -24,7 +29,7 @@ public class GameManager : MonoBehaviour
         spawnPosition.Scale(new Vector2((float).75, (float).5));
 
         //holds all different block types to be spawned
-        blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
+        blocks = Resources.LoadAll<GameObject>(path);
 
         SpawnBlock();
     }
@@ -53,7 +58,7 @@ public class GameManager : MonoBehaviour
     private void SpawnBlock()
     {
         // Get a random block
-        GameObject block = blocks[Random.Range(0, blocks.Length)];
+        GameObject block = blocks[7]; //blocks[Random.Range(0, blocks.Length)];
 
         // Spawn the block at the spawn position
         GameObject toSpawn = Instantiate(block, spawnPosition, Quaternion.identity);
@@ -134,23 +139,92 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void CheckRows(){
-
+    /*
+    Description: Checks if row is full
+    Where Called: Clear()
+    */
+    private static bool CheckRow(int y){
+        for(int x = 0; x < GRID_WIDTH; x++){
+            if(grid[x,y] == null){
+                return false;
+            }
+        }
+        return true;
     }
 
-    private void CheckColumns(){
-
+    /*
+    Description: Checks if column is full
+    Where Called: Clear()
+    */
+    private static bool CheckColumn(int x){
+        for(int y = 0; y < GRID_HEIGHT; y++){
+            if(grid[x,y] == null){
+                return false;
+            }
+        }
+        return true;
     }
 
-    private void DeleteRow(){
+    /*
+    Description: Deletes row of blocks
+    Where Called: Clear()
+    */
+    private static void DeleteRow(int y){
+        for(int x = 0; x < GRID_WIDTH; x++){
+            //this check fixes null exception error. This check is used when both column and row
+            //are cleared at the same time. Since DeleteColumn() is called first, the block piece
+            //in the grid is destroyed. Check prevents function from trying to destroy null object.
+            if(grid[x,y] == null){
+                continue;
+            }
+            Destroy(grid[x,y].gameObject);
 
+            grid[x,y] = null;
+        }
+    }
+    /*
+    Description: Deletes column of blocks
+    Where Called: Clear()
+    */
+    private static void DeleteColumn(int x){
+        for(int y = 0; y < GRID_HEIGHT; y++){
+            Destroy(grid[x,y].gameObject);
+
+            grid[x,y] = null;
+        }
     }
 
-    private void DeleteColumn(){
+    /*
+    Description: Iterates through grid and clears full row/column
+    Where Called: Block.cs -> OnMouseDown()
+    */
+    public void Clear(){
+        //goes through grid and marks which row/col should be deleted
+        for(int x = 0; x < GRID_WIDTH; x++){
+            if(CheckColumn(x)){
+                colToDelete[x] = true;
+            }
+        }
+        for(int y = 0; y < GRID_HEIGHT; y++){
+            if(CheckRow(y)){
+                rowsToDelete[y] = true;
+            }
+        }
 
-    }
-
-    private void Clear(){
-
+        //deletes row/col. Because DeleteRow is called second, there is a null exception error when deleting
+        //both column and row at the same time. Resolved by adding check in DeleteRow(). If for loops
+        //were switched, then function should be added to DeleteColumn() instead
+        for(int x = 0; x < GRID_WIDTH; x++){
+            if(colToDelete[x]){
+                DeleteColumn(x);
+                colToDelete[x] = false;
+            }
+        }
+        for(int y = 0; y < GRID_HEIGHT; y++){
+            if(rowsToDelete[y]){
+                DeleteRow(y);
+                rowsToDelete[y] = false;
+            }
+        }
     }
 }

@@ -15,6 +15,10 @@ public class Block : MonoBehaviour
 
     // Update is called once per frame
     void Update(){
+        /*if(Input.GetMouseButton(0)){
+            Vector2 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            transform.position = newPosition;
+        }*/
 
     }
 
@@ -30,5 +34,6 @@ public class Block : MonoBehaviour
 
     void OnMouseUp(){
         GameManager.manager.SnapToGrid(this);
+        GameManager.manager.Clear();
     }
 }
