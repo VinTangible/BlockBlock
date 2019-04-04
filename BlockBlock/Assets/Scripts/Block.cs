@@ -159,8 +159,11 @@ public class Block : MonoBehaviour
             //Debug.Log(el + " " + fullRowArr);
             for(int row = 0; row < gridWidth; row++)
             {
+              //making sure that we arent destroying a null piece
+              if(grid[row, el] != null){
                 Destroy(grid[row, el].gameObject);
                 grid[row, el] = null;
+              }
             }
             
             //fullRowArr.Remove(el);
@@ -168,11 +171,14 @@ public class Block : MonoBehaviour
 
         foreach (int el in fullColArr)
         {
-            Debug.Log(el + " " + fullColArr);
+            Debug.Log(el + " " + fullColArr.ToArray());
             for (int col = 0; col < gridHeight; col++)
             {
+              //making sure that we arent destroying a null piece
+              if(grid[el, col] != null){
                 Destroy(grid[el, col].gameObject);
                 grid[el, col] = null;
+              }
             }
             
             //fullColArr.Remove(el);
