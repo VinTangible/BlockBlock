@@ -10,23 +10,23 @@ public class GameManager : MonoBehaviour
 
     public static int GRID_WIDTH = 10;
     public static int GRID_HEIGHT = 10;
-    public static int NUM_SPAWN = 2;
+    public static int NUM_SPAWN = 3;
 
     // Name of sorting layers
     public static string UP_LAYER = "Up";
     public static string DOWN_LAYER = "Down";
 
-    Vector2 spawnPosition;
     int dropCount = 0;
 
-    GameObject[] blocks;    // Used to store Block prefabs
+    Block[] blocks;    // Used to store Block prefabs
     Transform pieces;       // Used to store Blocks in Scene Hierarchy
 
     Transform[,] grid = new Transform[GRID_WIDTH, GRID_HEIGHT];
     HashSet<int> rowsToCheck = new HashSet<int>();
     HashSet<int> colsToCheck = new HashSet<int>();
 
-    GameObject[] spawnedBlocks = new GameObject[NUM_SPAWN];
+    Block[] spawnedBlocks = new Block[NUM_SPAWN];
+    Vector2[] spawnPositions = new Vector2[NUM_SPAWN];
 
     // Create the singleton instance when GameManager starts
     void Awake()
@@ -44,10 +44,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // Currently spawn position is at 75% screen width, and 50% screen height
-        spawnPosition = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
-        spawnPosition.Scale(new Vector2((float).75, (float).5));
-        blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
+        CalculateSpawnPositions();
+
+        // Load block prefabs
+        blocks = Resources.LoadAll<Block>("Prefabs/Blocks");
 
         // Create transform to hold all block pieces
         pieces = new GameObject("Pieces").transform;
@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
     }
 
     // Drops the Block onto the board if valid
-    public void DropPiece(GameObject block)
+    public void DropPiece(Block block)
     {
         // Round the block's position to align with grid
         block.transform.position = Round(block.transform.position);
@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            block.transform.position = GetSpawnPosition(block);
+            block.ResetPosition();
         }
 
     }
@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour
     // Check if there is a valid drop position for any of the spawned blocks
     private bool HasValidDrop()
     {
-        foreach (GameObject block in spawnedBlocks)
+        foreach (Block block in spawnedBlocks)
         {
             // Only check if the block hasn't been dropped yet
             if (block.GetComponent<BoxCollider2D>().enabled)
@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour
                         if (IsValidPosition(block))
                         {
                             // Reset block back to its spawn position
-                            block.transform.position = GetSpawnPosition(block);
+                            block.ResetPosition();
 
                             return true;
                         }
@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour
                 }
                 
                 // Reset block back to its spawn position after checking
-                block.transform.position = GetSpawnPosition(block);
+                block.ResetPosition();
             }
         }
 
@@ -237,25 +237,16 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
-    // Get adjusted spawn position used to center the block at spawn
-    private Vector2 GetSpawnPosition(GameObject block)
-    {
-        BoxCollider2D box = block.GetComponent<BoxCollider2D>();
-
-        // Apply (.5, .5) offset because (.5, .5) of the block sticks out
-        return spawnPosition - box.size/2 + new Vector2(.5f, .5f);
-    }
-
     private void SpawnBlocks()
     {
         for (int i = 0; i < NUM_SPAWN; i++)
         {
             // Get a random block
-            GameObject block = blocks[Random.Range(0, blocks.Length)];
+            Block block = blocks[Random.Range(0, blocks.Length)];
 
-            // Spawn the block at the spawn position
-            GameObject toSpawn = Instantiate(block, GetSpawnPosition(block), Quaternion.identity);
-            toSpawn.transform.SetParent(pieces);
+            // Spawn the block at the respective spawn position
+            Block toSpawn = Instantiate(block, pieces);
+            toSpawn.Init(spawnPositions[i]);
 
             spawnedBlocks[i] = toSpawn;
         }
@@ -264,7 +255,7 @@ public class GameManager : MonoBehaviour
     }
 
     // Checks if the block is in a valid position
-    private bool IsValidPosition(GameObject block)
+    private bool IsValidPosition(Block block)
     {
         foreach (Transform blockPiece in block.transform)
         {
@@ -295,7 +286,26 @@ public class GameManager : MonoBehaviour
         return new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
     }
 
-    public void GameOver()
+    private void CalculateSpawnPositions()
+    {
+        // Spawn positions are split evenly by NUM_SPAWN + 2 partitions
+        // The 2 extra partitions are the edges where nothing spawns
+        int partitions = NUM_SPAWN + 1;
+
+        // X offset will be 75% of the screen
+        float xOffset = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width * (float)0.75, 0)).x;
+        float yOffset = (float)GRID_HEIGHT / (float)partitions;
+
+        Debug.Log("x: " + xOffset + " y: " + yOffset);
+        
+        for(int i = 0; i < NUM_SPAWN; i++)
+        {
+            spawnPositions[i] = new Vector2(xOffset, ((float)(i+1) * yOffset) - (float)0.5);
+            Debug.Log(spawnPositions[i]);
+        }
+    }
+
+    private void GameOver()
     {
         Debug.Log("Game Over");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
