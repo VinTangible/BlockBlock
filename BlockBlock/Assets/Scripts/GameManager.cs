@@ -10,12 +10,23 @@ public class GameManager : MonoBehaviour
 
     GameObject[] blocks;
 
-    //public static GameManager gameManager = null;
+    List<GameObject> blocksInGame = new List<GameObject>();
+
+    public static GameManager gameManager = null;
 
     public static int gridWidth = 10;
     public static int gridHeight = 10;
 
     public static Transform[,] grid = new Transform[gridWidth, gridHeight];
+
+    void Awake(){
+      if(gameManager == null) {
+        gameManager = this;
+      }
+      else if (gameManager != this) {
+        Destroy(gameObject);
+      }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -50,6 +61,9 @@ public class GameManager : MonoBehaviour
 
         // Spawn the block at the spawn position
         GameObject toSpawn = Instantiate(block, pos, Quaternion.identity);
+        toSpawn.GetComponent<Block>().SetSpawnPos(pos);
+
+        blocksInGame.Add(block);
     }
 
 
@@ -96,9 +110,18 @@ public class GameManager : MonoBehaviour
     }
 
     //Get the Initial Block Position
-    public Vector2 GetInitialBlockPos()
+    public Vector2 GetInitialBlockPos(string str)
     {
+      if(str == "spawnPosition"){
         return spawnPosition;
+      }
+      else if(str == "spawnPosition2"){
+        return spawnPosition2;
+      }
+      else if(str == "spawnPosition3"){
+        return spawnPosition3;
+      }
+      return new Vector2(12, (float) -3.5);
     }
 
     //Get the Grid 
@@ -119,11 +142,14 @@ public class GameManager : MonoBehaviour
         return gridHeight;
     }
 
+    public List<GameObject> GetBlocksInGame(){
+      return blocksInGame;
+    }
+
     //Setters
     //Set the grid position
     public void SetGridPos(Vector2 pos, Transform blockPiece)
     {
         grid[(int)pos.x, (int)pos.y] = blockPiece;
     }
-
 }

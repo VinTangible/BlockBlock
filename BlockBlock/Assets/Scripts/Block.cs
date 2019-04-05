@@ -13,15 +13,24 @@ public class Block : MonoBehaviour
     List<int> fullRowArr = new List<int>();
     List<int> fullColArr = new List<int>();
 
+    List<GameObject> blocksInGame;
+
     Vector2 spawnPosition;
+    Vector2 spawnPosition2;
+    Vector2 spawnPosition3;
+
+    GameManager gameManager = GameManager.gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        spawnPosition = FindObjectOfType<GameManager>().GetInitialBlockPos();
-        grid = FindObjectOfType<GameManager>().GetGrid();
-        gridHeight = FindObjectOfType<GameManager>().GetGridHeight();
-        gridWidth = FindObjectOfType<GameManager>().GetGridWidth();
+        //spawnPosition = gameManager.GetInitialBlockPos("spawnPosition");
+        //spawnPosition2 = gameManager.GetInitialBlockPos("spawnPosition2");
+        //spawnPosition3 = gameManager.GetInitialBlockPos("spawnPosition3");
+        grid = gameManager.GetGrid();
+        gridHeight = gameManager.GetGridHeight();
+        gridWidth = gameManager.GetGridWidth();
+        blocksInGame = gameManager.GetBlocksInGame();
     }
 
     // Update is called once per frame
@@ -45,17 +54,17 @@ public class Block : MonoBehaviour
     {
         foreach (Transform blockPiece in transform)
         {
-            Vector2 pos = FindObjectOfType<GameManager>().Round(blockPiece.position);
+            Vector2 pos = gameManager.Round(blockPiece.position);
 
             //Checks inside the grid
-            if (FindObjectOfType<GameManager>().CheckIsInsideGrid(pos) == false)
+            if (gameManager.CheckIsInsideGrid(pos) == false)
             {
                 return false;
             }
 
             //Checks if the current place in the grid is empty or not
-            if (FindObjectOfType<GameManager>().GetTransformAtGridPos(pos) != null &&
-                FindObjectOfType<GameManager>().GetTransformAtGridPos(pos).parent != transform)
+            if (gameManager.GetTransformAtGridPos(pos) != null &&
+                gameManager.GetTransformAtGridPos(pos).parent != transform)
             {
                 return false;
             }
@@ -73,12 +82,12 @@ public class Block : MonoBehaviour
         {
             foreach(Transform blockPiece in transform)
             {
-                Vector2 newBlockPos = FindObjectOfType<GameManager>().Round(transform.position);
-                Vector2 blockGridPos = FindObjectOfType<GameManager>().Round(blockPiece.position);
+                Vector2 newBlockPos = gameManager.Round(transform.position);
+                Vector2 blockGridPos = gameManager.Round(blockPiece.position);
 
                 transform.position = newBlockPos;
 
-                FindObjectOfType<GameManager>().SetGridPos(blockGridPos, blockPiece);
+                gameManager.SetGridPos(blockGridPos, blockPiece);
                 
                 blockPiece.GetComponent<BoxCollider2D>().enabled = false;    
 
@@ -90,8 +99,39 @@ public class Block : MonoBehaviour
         }
 
         //revert to spawn position once it is not valid position
-        transform.position = spawnPosition;
+        //transform.position = spawnPosition;
+        SpawnBackToInitialPos();
         return false;
+    }
+
+    // void spawnBackToInitialPos(Transform block) {
+    //   int tracker = 0;
+    //   foreach(GameObject listBlock in blocksInGame) {
+    //     Debug.Log(this + " hey  " + listBlock.GetComponentInParent<Block>());
+    //     Debug.Log(this == listBlock.GetComponentInParent<Block>());
+    //     if(listBlock.transform.parent == block) {
+    //       if(tracker == 0){
+    //         //block.position = spawnPosition;
+    //         block.SetBlockPos(gameManager.GetInitialBlockPos("spawnPosition"));
+    //         break;
+    //       }
+    //       else if(tracker == 1) {
+    //         //block.position = spawnPosition2;
+    //         block.SetBlockPos(gameManager.GetInitialBlockPos("spawnPosition2"));
+    //         break;
+    //       }
+    //       else if(tracker == 2) {
+    //         //block.position = spawnPosition3;
+    //         block.SetBlockPos(gameManager.GetInitialBlockPos("spawnPosition3"));
+    //         break;
+    //       }
+    //     }
+    //     tracker++;
+    //   }
+    // }
+
+    void SpawnBackToInitialPos() {
+      GetComponentInParent<Transform>().position = spawnPosition;
     }
 
     //Clearing Rows and Columns
@@ -190,7 +230,8 @@ public class Block : MonoBehaviour
         GameObject[] blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
         GameObject block = blocks[Random.Range(0, blocks.Length)];
         GameObject nextBlock = (GameObject)Instantiate(block, pos, Quaternion.identity);
-
+        nextBlock.GetComponent<Block>().SetSpawnPos(pos);
+        nextBlock.GetComponent<Block>().SpawnBackToInitialPos();
         RotateBlock(nextBlock.GetComponentInParent<Transform>());
 
     }
@@ -217,5 +258,9 @@ public class Block : MonoBehaviour
         }
     }
 
+    //Setters
+    public void SetSpawnPos(Vector2 pos) {
+      spawnPosition = pos;
+    }
 
 }
