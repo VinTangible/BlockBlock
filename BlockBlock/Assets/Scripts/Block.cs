@@ -19,7 +19,7 @@ public class Block : MonoBehaviour
     // Vector2 spawnPosition2;
     // Vector2 spawnPosition3;
 
-    // GameManager gameManager = GameManager.gameManager;
+    GameManager gameManager = GameManager.gameManager;
 
     // Start is called before the first frame update
     void Start()
@@ -36,15 +36,16 @@ public class Block : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // if (Input.GetMouseButtonUp(0))
-        // {
-        //     if(SnapToGrid())
-        //     {
-        //         AddingFullRows();
-        //         ClearRowCol();
-        //         SpawnNextBlock(spawnPosition);
-        //     }
-        // }
+        if (Input.GetMouseButtonUp(0))
+        {
+            //Debug.Log(gameManager.SnapToGrid(this));
+            if(gameManager.SnapToGrid(this))
+            {
+                // AddingFullRows();
+                // ClearRowCol();
+                //gameManager.SpawnBlock(spawnPosition);
+            }
+        }
     }
 
     //Grid Snapping
@@ -211,7 +212,7 @@ public class Block : MonoBehaviour
     // }
 
     //Rotate block (Different combinations)
-    void RotateBlock(Transform block)
+    public void RotateBlock(Transform block)
     {
         int[] allowDegree = { 0, 90, 180, 270 };
         int[] limitDegree = {0, 90};

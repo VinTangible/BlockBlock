@@ -31,9 +31,6 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // Currently spawn position is at 75% screen width, and 50% screen height
-        //spawnPosition = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
-        //spawnPosition.Scale(new Vector2((float).75, (float).5));
         spawnPosition = new Vector2(-2, (float) -3.5);
         spawnPosition2 = new Vector2(4, (float) -3.5);
         spawnPosition3 = new Vector2(9, (float) -3.5);
@@ -41,8 +38,8 @@ public class GameManager : MonoBehaviour
         blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
 
         SpawnBlock(spawnPosition);
-        SpawnBlock(spawnPosition2);
-        SpawnBlock(spawnPosition3);
+        //SpawnBlock(spawnPosition2);
+        //SpawnBlock(spawnPosition3);
     }
 
     // Update is called once per frame
@@ -51,7 +48,7 @@ public class GameManager : MonoBehaviour
         
     }
 
-    // Private Functions
+    ////////////////////////Spawn Blocks Functions///////////////////////////
 
     //Spawns Initial Blocks
     private void SpawnBlock(Vector2 pos)
@@ -61,7 +58,7 @@ public class GameManager : MonoBehaviour
 
         // Spawn the block at the spawn position
         GameObject toSpawn = Instantiate(block, pos, Quaternion.identity);
-        toSpawn.GetComponent<Block>().SetSpawnPos(pos);
+        //toSpawn.GetComponent<Block>().SetSpawnPos(pos);
 
         blocksInGame.Add(block);
     }
@@ -82,22 +79,74 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    //////////////Grid Snapping Functions/////////////////////
+
+    //Check if the block is inside the grid
+    private bool CheckIsInsideGrid(Vector2 pos)
+    {
+        return ((int)pos.y < gridHeight && (int)pos.y >= 0 && (int)pos.x < gridWidth && (int)pos.x >= 0);
+    }
+
+    // Checks if the current piece is inside the grid 
+    // and is not conflicting with an existing block
+    private bool CheckIsValidPosition()
+    {
+        foreach (Transform blockPiece in transform)
+        {
+            Vector2 pos = gameManager.Round(blockPiece.position);
+
+            //Checks inside the grid
+            if (CheckIsInsideGrid(pos) == false)
+            {
+                return false;
+            }
+
+            //Checks if the current place in the grid is empty or not
+            if (GetTransformAtGridPos(pos) != null &&
+                GetTransformAtGridPos(pos).parent != transform)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public bool SnapToGrid(Block block){
+        if(CheckIsValidPosition()){
+          int inc = 0;
+            foreach(Transform blockPiece in block.transform) {
+
+                Vector2 newBlockPos = Round(block.transform.position);
+                Vector2 blockGridPos = Round(blockPiece.position);
+                Debug.Log(newBlockPos + "   " + blockGridPos + " gt " + inc);
+                inc++;
+                //Set the current transform piece to snap to the closest grid block
+                transform.position = newBlockPos;
+                //Set the Grid to have the transform piece
+                SetGridPos(blockGridPos, blockPiece);
+                //Disable each block piece
+                blockPiece.GetComponent<BoxCollider2D>().enabled = false;
+            }
+            //Disable block
+            block.enabled = false;
+
+            return true;
+        }
+        return false;
+    }
+    //////////////Utility Functions//////////////////////////
 
     //Round the position of the block
     public Vector2 Round (Vector2 pos)
     {
         return new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
     }
-
-    //Check if the block is inside the grid
-    public bool CheckIsInsideGrid(Vector2 pos)
-    {
-        return ((int)pos.y < gridHeight && (int)pos.y >= 0 && (int)pos.x < gridWidth && (int)pos.x >= 0);
-    }
-
-    //Getters
+    
+    //-Getter Functions
+    
     //Get the transform block at a certain location
-    public Transform GetTransformAtGridPos(Vector2 pos)
+    Transform GetTransformAtGridPos(Vector2 pos)
     {
         if (!CheckIsInsideGrid(pos))
         {
@@ -109,42 +158,42 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //Get the Initial Block Position
-    public Vector2 GetInitialBlockPos(string str)
-    {
-      if(str == "spawnPosition"){
-        return spawnPosition;
-      }
-      else if(str == "spawnPosition2"){
-        return spawnPosition2;
-      }
-      else if(str == "spawnPosition3"){
-        return spawnPosition3;
-      }
-      return new Vector2(12, (float) -3.5);
-    }
+    // //Get the Initial Block Position
+    // public Vector2 GetInitialBlockPos(string str)
+    // {
+    //   if(str == "spawnPosition"){
+    //     return spawnPosition;
+    //   }
+    //   else if(str == "spawnPosition2"){
+    //     return spawnPosition2;
+    //   }
+    //   else if(str == "spawnPosition3"){
+    //     return spawnPosition3;
+    //   }
+    //   return new Vector2(12, (float) -3.5);
+    // }
 
-    //Get the Grid 
-    public Transform[,] GetGrid()
-    {
-        return grid;
-    }
+    // //Get the Grid 
+    // public Transform[,] GetGrid()
+    // {
+    //     return grid;
+    // }
 
-    //Get the grid width
-    public int GetGridWidth()
-    {
-        return gridWidth;
-    }
+    // //Get the grid width
+    // public int GetGridWidth()
+    // {
+    //     return gridWidth;
+    // }
 
-    //Get the grid height
-    public int GetGridHeight()
-    {
-        return gridHeight;
-    }
+    // //Get the grid height
+    // public int GetGridHeight()
+    // {
+    //     return gridHeight;
+    // }
 
-    public List<GameObject> GetBlocksInGame(){
-      return blocksInGame;
-    }
+    // public List<GameObject> GetBlocksInGame(){
+    //   return blocksInGame;
+    // }
 
     //Setters
     //Set the grid position
