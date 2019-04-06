@@ -104,32 +104,6 @@ public class Block : MonoBehaviour
         return false;
     }
 
-    // void spawnBackToInitialPos(Transform block) {
-    //   int tracker = 0;
-    //   foreach(GameObject listBlock in blocksInGame) {
-    //     Debug.Log(this + " hey  " + listBlock.GetComponentInParent<Block>());
-    //     Debug.Log(this == listBlock.GetComponentInParent<Block>());
-    //     if(listBlock.transform.parent == block) {
-    //       if(tracker == 0){
-    //         //block.position = spawnPosition;
-    //         block.SetBlockPos(gameManager.GetInitialBlockPos("spawnPosition"));
-    //         break;
-    //       }
-    //       else if(tracker == 1) {
-    //         //block.position = spawnPosition2;
-    //         block.SetBlockPos(gameManager.GetInitialBlockPos("spawnPosition2"));
-    //         break;
-    //       }
-    //       else if(tracker == 2) {
-    //         //block.position = spawnPosition3;
-    //         block.SetBlockPos(gameManager.GetInitialBlockPos("spawnPosition3"));
-    //         break;
-    //       }
-    //     }
-    //     tracker++;
-    //   }
-    // }
-
     void SpawnBackToInitialPos() {
       GetComponentInParent<Transform>().position = spawnPosition;
     }
