@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log(newBlockPos + "   " + blockGridPos + " gt " + inc);
                 inc++;
                 //Set the current transform piece to snap to the closest grid block
-                transform.position = newBlockPos;
+                block.transform.position = newBlockPos;
                 //Set the Grid to have the transform piece
                 SetGridPos(blockGridPos, blockPiece);
                 //Disable each block piece
