@@ -15,7 +15,7 @@ public class Block : MonoBehaviour
 
     // List<GameObject> blocksInGame;
 
-    // Vector2 spawnPosition;
+    Vector2 spawnPosition;
     // Vector2 spawnPosition2;
     // Vector2 spawnPosition3;
 
@@ -31,6 +31,7 @@ public class Block : MonoBehaviour
         // gridHeight = gameManager.GetGridHeight();
         // gridWidth = gameManager.GetGridWidth();
         // blocksInGame = gameManager.GetBlocksInGame();
+        spawnPosition = gameManager.GetSpawnPosition(this);
     }
 
     // Update is called once per frame
@@ -41,9 +42,9 @@ public class Block : MonoBehaviour
             //Debug.Log(gameManager.SnapToGrid(this));
             if(gameManager.SnapToGrid(this))
             {
-                // AddingFullRows();
-                // ClearRowCol();
-                //gameManager.SpawnBlock(spawnPosition);
+                gameManager.AddingFullRowsInColRow();
+                gameManager.ClearRowCol();
+                gameManager.SpawnBlock(spawnPosition);
             }
         }
     }

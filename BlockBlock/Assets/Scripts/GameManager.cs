@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 
     GameObject[] blocks;
 
+    List<int> rowFullList = new List<int>();
+    List<int> colFullList = new List<int>();
     List<GameObject> blocksInGame = new List<GameObject>();
 
     public static GameManager gameManager = null;
@@ -51,7 +53,7 @@ public class GameManager : MonoBehaviour
     ////////////////////////Spawn Blocks Functions///////////////////////////
 
     //Spawns Initial Blocks
-    private void SpawnBlock(Vector2 pos)
+    public void SpawnBlock(Vector2 pos)
     {
         // Get a random block
         GameObject block = blocks[Random.Range(0, blocks.Length)];
@@ -112,15 +114,15 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
+    //Snaps to the Grid
+    //Returns true if it does
+    //Returns false if it doesn't
     public bool SnapToGrid(Block block){
         if(CheckIsValidPosition()){
-          int inc = 0;
             foreach(Transform blockPiece in block.transform) {
 
                 Vector2 newBlockPos = Round(block.transform.position);
                 Vector2 blockGridPos = Round(blockPiece.position);
-                Debug.Log(newBlockPos + "   " + blockGridPos + " gt " + inc);
-                inc++;
                 //Set the current transform piece to snap to the closest grid block
                 block.transform.position = newBlockPos;
                 //Set the Grid to have the transform piece
@@ -135,6 +137,93 @@ public class GameManager : MonoBehaviour
         }
         return false;
     }
+
+    ////////////Clearing Rows and Columns//////////////////////////
+
+    //Checking full row
+    //Returns true if the row is full
+    private bool isFullRowAt(int y)
+    {
+        for(int row = 0; row < gridWidth; row++)
+        {
+            if(grid[row , y] == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //Checking full col
+    //Return true if the current column is full
+    private bool isFullColAt(int x)
+    {
+        for(int col = 0; col < gridHeight; col++)
+        {
+            if(grid[x, col] == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //Adds the row number and col number into a list if that
+    //row or column if full
+    public void AddingFullRowsInColRow()
+    {
+        //Adding row number into list
+        for(int row = 0; row < gridWidth; row++)
+        {
+            if (isFullColAt(row))
+            {
+                colFullList.Add(row);
+            }
+        }
+
+        //Adding col number into list
+        for(int col = 0; col < gridHeight; col++)
+        {
+            if (isFullRowAt(col))
+            {
+                rowFullList.Add(col);
+            }
+        }
+    }
+
+    //Go through each row and column number in the list
+    //and destroying and deleting the blocks from the grid 
+    public void ClearRowCol()
+    {
+        //Can't manipulate data structure at the same time as transversing
+        //Gives Error
+
+        foreach(int el in rowFullList)
+        {
+            for(int row = 0; row < gridWidth; row++)
+            {
+              //making sure that we arent destroying a null piece
+              if(grid[row, el] != null){
+                Destroy(grid[row, el].gameObject);
+                grid[row, el] = null;
+              }
+            }
+        }
+
+        foreach (int el in colFullList)
+        {
+            for (int col = 0; col < gridHeight; col++)
+            {
+              //making sure that we arent destroying a null piece
+              if(grid[el, col] != null){
+                Destroy(grid[el, col].gameObject);
+                grid[el, col] = null;
+              }
+            }
+        }
+
+    }
+
     //////////////Utility Functions//////////////////////////
 
     //Round the position of the block
@@ -158,7 +247,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // //Get the Initial Block Position
+    //Get the Initial Block Position
+    public Vector2 GetSpawnPosition(Block block){
+      return spawnPosition;
+    }
+    
     // public Vector2 GetInitialBlockPos(string str)
     // {
     //   if(str == "spawnPosition"){
