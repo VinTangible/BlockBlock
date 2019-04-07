@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     List<int> colFullList = new List<int>();
     List<GameObject> blocksInGame = new List<GameObject>();
 
+    int blockCount;
     public static GameManager gameManager = null;
 
     public static int gridWidth = 10;
@@ -42,6 +43,8 @@ public class GameManager : MonoBehaviour
         SpawnBlock(spawnPosition);
         SpawnBlock(spawnPosition2);
         SpawnBlock(spawnPosition3);
+
+        blockCount = 3;
     }
 
     // Update is called once per frame
@@ -62,7 +65,17 @@ public class GameManager : MonoBehaviour
         GameObject toSpawn = Instantiate(block, pos, Quaternion.identity);
         //toSpawn.GetComponent<Block>().SetSpawnPos(pos);
 
-        blocksInGame.Add(block);
+        //blocksInGame.Add(block);
+    }
+
+    //Spawns the blocks when the user uses all blocks in the game
+    public void SpawnBlockWhenAllUsed(){
+        if(blockCount <= 0){
+            SpawnBlock(spawnPosition);
+            SpawnBlock(spawnPosition2);
+            SpawnBlock(spawnPosition3);
+            blockCount = 3;
+        }
     }
 
     //////////////Grid Snapping Functions/////////////////////
@@ -116,9 +129,10 @@ public class GameManager : MonoBehaviour
             }
             //Disable block
             block.enabled = false;
-
+            blockCount--;
             return true;
         }
+        block.transform.position = block.GetBlockSpawnPosition();
         return false;
     }
 

@@ -25,7 +25,7 @@ public class Block : MonoBehaviour
             {
                 gameManager.AddingFullRowsInColRow();
                 gameManager.ClearRowCol();
-                gameManager.SpawnBlock(spawnPosition);
+                gameManager.SpawnBlockWhenAllUsed();
             }
         }
     }
@@ -48,4 +48,9 @@ public class Block : MonoBehaviour
             block.Rotate(0, 0, allowDegree[randomIndex]);
         }
     }
+    /////////////////Get Functions////////////////////
+    public Vector2 GetBlockSpawnPosition(){
+        return spawnPosition;
+    }
+
 }
