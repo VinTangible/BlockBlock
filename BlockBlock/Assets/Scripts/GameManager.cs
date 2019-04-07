@@ -91,9 +91,9 @@ public class GameManager : MonoBehaviour
 
     // Checks if the current piece is inside the grid 
     // and is not conflicting with an existing block
-    private bool CheckIsValidPosition()
+    private bool CheckIsValidPosition(Block block)
     {
-        foreach (Transform blockPiece in transform)
+        foreach (Transform blockPiece in block.transform)
         {
             Vector2 pos = gameManager.Round(blockPiece.position);
 
@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
 
             //Checks if the current place in the grid is empty or not
             if (GetTransformAtGridPos(pos) != null &&
-                GetTransformAtGridPos(pos).parent != transform)
+                GetTransformAtGridPos(pos).parent != block.transform)
             {
                 return false;
             }
@@ -118,7 +118,7 @@ public class GameManager : MonoBehaviour
     //Returns true if it does
     //Returns false if it doesn't
     public bool SnapToGrid(Block block){
-        if(CheckIsValidPosition()){
+        if(CheckIsValidPosition(block)){
             foreach(Transform blockPiece in block.transform) {
 
                 Vector2 newBlockPos = Round(block.transform.position);
