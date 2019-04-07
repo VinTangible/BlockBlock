@@ -31,7 +31,7 @@ public class Block : MonoBehaviour
         // gridHeight = gameManager.GetGridHeight();
         // gridWidth = gameManager.GetGridWidth();
         // blocksInGame = gameManager.GetBlocksInGame();
-        spawnPosition = gameManager.GetSpawnPosition(this);
+        spawnPosition = this.transform.position;
     }
 
     // Update is called once per frame

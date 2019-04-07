@@ -40,8 +40,8 @@ public class GameManager : MonoBehaviour
         blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
 
         SpawnBlock(spawnPosition);
-        //SpawnBlock(spawnPosition2);
-        //SpawnBlock(spawnPosition3);
+        SpawnBlock(spawnPosition2);
+        SpawnBlock(spawnPosition3);
     }
 
     // Update is called once per frame
