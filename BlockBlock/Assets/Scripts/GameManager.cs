@@ -65,22 +65,6 @@ public class GameManager : MonoBehaviour
         blocksInGame.Add(block);
     }
 
-
-    //Public Functions
-
-    //Updates the grid on which positions in the grid are filled
-    public void UpdateGrid(BlockPiece block)
-    {
-        foreach(Transform blockPiece in block.transform)
-        {
-            Vector2 pos = Round(blockPiece.position);
-
-            if(CheckIsInsideGrid(pos))
-            {
-                grid[(int)pos.x, (int)pos.y] = blockPiece;
-            }
-        }
-    }
     //////////////Grid Snapping Functions/////////////////////
 
     //Check if the block is inside the grid
@@ -225,7 +209,7 @@ public class GameManager : MonoBehaviour
         ClearBothList();
     }
 
-    void ClearBothList() {
+    private void ClearBothList() {
       rowFullList.Clear();
       colFullList.Clear();
     }
@@ -241,7 +225,7 @@ public class GameManager : MonoBehaviour
     //-Getter Functions
     
     //Get the transform block at a certain location
-    Transform GetTransformAtGridPos(Vector2 pos)
+    private Transform GetTransformAtGridPos(Vector2 pos)
     {
         if (!CheckIsInsideGrid(pos))
         {
@@ -252,48 +236,7 @@ public class GameManager : MonoBehaviour
             return grid[(int)pos.x, (int)pos.y];
         }
     }
-
-    //Get the Initial Block Position
-    public Vector2 GetSpawnPosition(Block block){
-      return spawnPosition;
-    }
     
-    // public Vector2 GetInitialBlockPos(string str)
-    // {
-    //   if(str == "spawnPosition"){
-    //     return spawnPosition;
-    //   }
-    //   else if(str == "spawnPosition2"){
-    //     return spawnPosition2;
-    //   }
-    //   else if(str == "spawnPosition3"){
-    //     return spawnPosition3;
-    //   }
-    //   return new Vector2(12, (float) -3.5);
-    // }
-
-    // //Get the Grid 
-    // public Transform[,] GetGrid()
-    // {
-    //     return grid;
-    // }
-
-    // //Get the grid width
-    // public int GetGridWidth()
-    // {
-    //     return gridWidth;
-    // }
-
-    // //Get the grid height
-    // public int GetGridHeight()
-    // {
-    //     return gridHeight;
-    // }
-
-    // public List<GameObject> GetBlocksInGame(){
-    //   return blocksInGame;
-    // }
-
     //Setters
     //Set the grid position
     public void SetGridPos(Vector2 pos, Transform blockPiece)
