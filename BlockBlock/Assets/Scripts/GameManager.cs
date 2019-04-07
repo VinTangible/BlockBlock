@@ -222,6 +222,12 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        ClearBothList();
+    }
+
+    void ClearBothList() {
+      rowFullList.Clear();
+      colFullList.Clear();
     }
 
     //////////////Utility Functions//////////////////////////
