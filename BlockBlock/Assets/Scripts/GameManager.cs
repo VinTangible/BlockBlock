@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     List<int> colFullList = new List<int>();
     List<GameObject> blocksInGame = new List<GameObject>();
 
-    int blockCount;
+    int blockCount = 0;
     public static GameManager gameManager = null;
 
     public static int gridWidth = 10;
@@ -40,11 +40,7 @@ public class GameManager : MonoBehaviour
         
         blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
 
-        SpawnBlock(spawnPosition);
-        SpawnBlock(spawnPosition2);
-        SpawnBlock(spawnPosition3);
-
-        blockCount = 3;
+        SpawnBlockWhenAllUsed();
     }
 
     // Update is called once per frame
@@ -60,10 +56,9 @@ public class GameManager : MonoBehaviour
     {
         // Get a random block
         GameObject block = blocks[Random.Range(0, blocks.Length)];
-
         // Spawn the block at the spawn position
         GameObject toSpawn = Instantiate(block, pos, Quaternion.identity);
-        //toSpawn.GetComponent<Block>().SetSpawnPos(pos);
+        toSpawn.GetComponent<Block>().RotateBlock();
 
         //blocksInGame.Add(block);
     }

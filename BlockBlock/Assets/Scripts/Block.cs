@@ -31,7 +31,7 @@ public class Block : MonoBehaviour
     }
 
     //Rotate block (Different combinations)
-    public void RotateBlock(Transform block)
+    public void RotateBlock()
     {
         int[] allowDegree = { 0, 90, 180, 270 };
         int[] limitDegree = {0, 90};
@@ -39,13 +39,15 @@ public class Block : MonoBehaviour
 
         if(allowRotation && limitRotation)
         {
+            //Debug.Log("LIMIT Here");
             randomIndex = Random.Range(0, limitDegree.Length);
-            block.Rotate(0, 0, limitDegree[randomIndex]);
+            GetComponent<Transform>().Rotate(0, 0, limitDegree[randomIndex]);
         }
         else if(allowRotation)
         {
+            //Debug.Log("Allow Here");
             randomIndex = Random.Range(0, allowDegree.Length);
-            block.Rotate(0, 0, allowDegree[randomIndex]);
+            GetComponent<Transform>().Rotate(0, 0, allowDegree[randomIndex]);
         }
     }
     /////////////////Get Functions////////////////////
