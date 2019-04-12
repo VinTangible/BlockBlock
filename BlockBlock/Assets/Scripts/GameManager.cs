@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    Vector2 spawnPosition;
+    Vector2 spawnPos;
+    Vector2 spawnPos1;
+    Vector2 spawnPos2;
     //holds all types of blocks that can be spawned
     Block[] blocks;
 
@@ -25,13 +27,25 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         // Currently spawn position is at 75% screen width, and 50% screen height
-        spawnPosition = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height)); //why do we need Camera.main.ScreenToWorldPoint?
-        spawnPosition.Scale(new Vector2((float).75, (float).5));
+        //spawnPos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
+        //spawnPos.Scale(new Vector2((float).75, (float).25));
+        spawnPos = new Vector2(0,-6);
+        //spawnPos = Camera.main.ScreenToWorldPoint(new Vector3);
+
+        //spawnPos1 = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height)); 
+        //spawnPos1.Scale(new Vector2((float).75, (float).5));
+        spawnPos1 = new Vector2(5,-6);
+
+        //spawnPos2 = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
+        //spawnPos2.Scale(new Vector2((float).75, (float).75));
+        spawnPos2 = new Vector2(10,-6);
 
         //holds all different block types to be spawned
         blocks = Resources.LoadAll<Block>(prefabPath);
 
-        SpawnBlock();
+        SpawnBlock(spawnPos);
+        SpawnBlock(spawnPos1);
+        SpawnBlock(spawnPos2);
     }
 
     // Update is called once per frame
@@ -55,31 +69,40 @@ public class GameManager : MonoBehaviour
     Description: Spawns new block
     Where Called: Start(), SnapToGrid()
      */
-    private void SpawnBlock()
+    private void SpawnBlock(Vector2 pos)
     {
         // Get a random block
         Block block = blocks[Random.Range(0, blocks.Length)];
 
         // Spawn the block at the spawn position
-        Block toSpawn = Instantiate(block, spawnPosition, Quaternion.identity);
+        Block toSpawn = Instantiate(block, pos, Quaternion.identity);
+        //save spawn position within block if block is reset to spawn position
+        toSpawn.spawnPosition = pos;
 
-/* How do I rotate using a function? Function would only rotate the shallow copy of the block. How to rotate the original copy?*/
-        //checks if block can rotate
-        if(toSpawn.allowRotation){
-            //rotate spawned block
-            toSpawn.transform.Rotate(0,0,getRotationVal());
-        }
+        RotateBlock(toSpawn);
     }
 
     /*
     Description: Gets value to rotate block
-    Where Called: SpawnBlock()
+    Where Called: RotateBlock()
      */
-    private int getRotationVal(){
+    private int GetRotationVal(){
         //declare array to hold possible rotations
         int[] rotationValues = {0,90,180,270};
 
         return rotationValues[Random.Range(0,rotationValues.Length)];
+    }
+
+    /*
+    Description: Rotates block
+    Where Called: SpawnBlock()
+    */
+    private void RotateBlock(Block block){
+        //checks if block can be rotated
+        if(block.allowRotation){
+            //block.transform.Rotate(0,0,GetRotationVal());
+            block.transform.RotateAround(block.spawnPosition, Vector3.forward, 90);
+        }
     }
 
     /* 
@@ -140,10 +163,10 @@ public class GameManager : MonoBehaviour
             block.GetComponent<BoxCollider2D>().enabled = false;
             
             UpdateGrid(block);
-            SpawnBlock();
+            SpawnBlock(block.spawnPosition);
         }
         else{
-            block.transform.position = spawnPosition;
+            block.transform.position = block.spawnPosition;
         }
     }
 
