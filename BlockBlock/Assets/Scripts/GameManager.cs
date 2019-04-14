@@ -240,7 +240,7 @@ public class GameManager : MonoBehaviour
         string[] blocks = {"El2", "El3", "Long2", "Long3", "Long4", "Long5", 
             "Square1", "Square2", "Square3"};
 
-        int randomBlock = Random.Range(0, 9);
+        int randomBlock = Random.Range(0, blocks.Length);
 
         return prefabPath + blocks[randomBlock];
     }
