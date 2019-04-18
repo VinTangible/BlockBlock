@@ -34,9 +34,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        spawnPosition = new Vector2(-2, (float) -3.5);
-        spawnPosition2 = new Vector2(4, (float) -3.5);
-        spawnPosition3 = new Vector2(9, (float) -3.5);
+        spawnPosition = new Vector2(-2, (float) -4.5);
+        spawnPosition2 = new Vector2(4, (float) -4.5);
+        spawnPosition3 = new Vector2(9, (float) -4.5);
         
         blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
 
@@ -59,6 +59,7 @@ public class GameManager : MonoBehaviour
         // Spawn the block at the spawn position
         GameObject toSpawn = Instantiate(block, pos, Quaternion.identity);
         toSpawn.GetComponent<Block>().RotateBlock();
+        toSpawn.GetComponent<Transform>().localScale = new Vector3( (float) 0.75, (float) 0.75, 1);
 
         //blocksInGame.Add(block);
     }
@@ -128,6 +129,7 @@ public class GameManager : MonoBehaviour
             return true;
         }
         block.transform.position = block.GetBlockSpawnPosition();
+        block.transform.localScale = new Vector3(( float) 0.75, (float) 0.75, 1);
         return false;
     }
 
