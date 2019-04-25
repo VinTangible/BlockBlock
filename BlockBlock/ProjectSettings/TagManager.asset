@@ -41,6 +41,12 @@ TagManager:
   - name: Board
     uniqueID: 2265497019
     locked: 0
+  - name: Snapped
+    uniqueID: 2482579171
+    locked: 0
+  - name: Clicked
+    uniqueID: 2613769853
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
