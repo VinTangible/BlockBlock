@@ -126,10 +126,12 @@ public class GameManager : MonoBehaviour
             //Disable block
             block.enabled = false;
             blockCount--;
+            block.SetSortingLayer("Snapped", 1);
             return true;
         }
         block.transform.position = block.GetBlockSpawnPosition();
         block.transform.localScale = new Vector3(( float) 0.75, (float) 0.75, 1);
+        block.SetSortingLayer("Default", 0);
         return false;
     }
 

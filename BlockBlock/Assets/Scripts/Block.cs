@@ -21,6 +21,7 @@ public class Block : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
+            SetSortingLayer("Clicked", 2);
             if(gameManager.SnapToGrid(this))
             {
                 gameManager.AddingFullRowsInColRow();
@@ -49,6 +50,15 @@ public class Block : MonoBehaviour
             randomIndex = Random.Range(0, allowDegree.Length);
             GetComponent<Transform>().Rotate(0, 0, allowDegree[randomIndex]);
         }
+    }
+
+    public void SetSortingLayer(string sortingLayerName, int sortingOrder) {
+        foreach(Transform blockPiece in transform) {
+            blockPiece.GetComponentInParent<SpriteRenderer>().sortingLayerName = sortingLayerName;
+            blockPiece.GetComponentInParent<SpriteRenderer>().sortingOrder = sortingOrder;
+        }
+        //transform.GetComponentInParent<SpriteRenderer>().sortingLayerName = sortingLayerName;
+        //transform.GetComponentInParent<SpriteRenderer>().sortingOrder = sortingOrder;
     }
     /////////////////Get Functions////////////////////
     public Vector2 GetBlockSpawnPosition(){
