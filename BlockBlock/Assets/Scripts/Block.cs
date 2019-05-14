@@ -26,6 +26,9 @@ public class Block : MonoBehaviour
             {
                 gameManager.AddingFullRowsInColRow();
                 gameManager.ClearRowCol();
+                if(gameManager.isGameOver()) {
+                    Debug.Log("GameOver");
+                }
                 gameManager.SpawnBlockWhenAllUsed();
             }
         }

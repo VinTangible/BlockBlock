@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
 
     List<int> rowFullList = new List<int>();
     List<int> colFullList = new List<int>();
-    List<GameObject> blocksInGame = new List<GameObject>();
+    IList<Block> blocksInGame = new List<Block>();
 
     int blockCount = 0;
     public static GameManager gameManager = null;
@@ -60,6 +60,7 @@ public class GameManager : MonoBehaviour
         GameObject toSpawn = Instantiate(block, pos, Quaternion.identity);
         toSpawn.GetComponent<Block>().RotateBlock();
         toSpawn.GetComponent<Transform>().localScale = new Vector3( (float) 0.75, (float) 0.75, 1);
+        blocksInGame.Add(toSpawn.GetComponent<Block>());
 
         //blocksInGame.Add(block);
     }
@@ -127,6 +128,7 @@ public class GameManager : MonoBehaviour
             block.enabled = false;
             blockCount--;
             block.SetSortingLayer("Snapped", 1);
+            blocksInGame.Remove(block);
             return true;
         }
         block.transform.position = block.GetBlockSpawnPosition();
@@ -201,8 +203,8 @@ public class GameManager : MonoBehaviour
             {
               //making sure that we arent destroying a null piece
               if(grid[row, el] != null){
-                Destroy(grid[row, el].gameObject);
-                grid[row, el] = null;
+                  Destroy(grid[row, el].gameObject);
+                  grid[row, el] = null;
               }
             }
         }
@@ -211,11 +213,11 @@ public class GameManager : MonoBehaviour
         {
             for (int col = 0; col < gridHeight; col++)
             {
-              //making sure that we arent destroying a null piece
-              if(grid[el, col] != null){
-                Destroy(grid[el, col].gameObject);
-                grid[el, col] = null;
-              }
+                //making sure that we arent destroying a null piece
+                if(grid[el, col] != null){
+                    Destroy(grid[el, col].gameObject);
+                    grid[el, col] = null;
+                }
             }
         }
 
@@ -223,8 +225,32 @@ public class GameManager : MonoBehaviour
     }
 
     private void ClearBothList() {
-      rowFullList.Clear();
-      colFullList.Clear();
+        rowFullList.Clear();
+        colFullList.Clear();
+    }
+
+    //////////////Checking For Valid Positions/////////////////
+    public bool isGameOver() {
+        //going through available blocks
+        for(int i = 0; i < blocksInGame.Count; i++) {
+            //going through grid
+            for(int row = 0; row < gridWidth; row++) {
+                for(int col = 0; col < gridHeight; col++) {
+                    //Check if the current grid block is not filled
+                    if(grid[row, col] == null) {
+                        blocksInGame[i].transform.position = new Vector2(row, col);
+                        //Check if it is a valid position
+                        if(CheckIsValidPosition(blocksInGame[i])) {
+                            //return to spawn position and return false since it is not Game Over
+                            blocksInGame[i].transform.position = blocksInGame[i].GetBlockSpawnPosition();
+                            return false;  
+                        }
+                    }
+                }
+            }
+            blocksInGame[i].transform.position = blocksInGame[i].GetBlockSpawnPosition();
+        }
+        return true;
     }
 
     //////////////Utility Functions//////////////////////////
