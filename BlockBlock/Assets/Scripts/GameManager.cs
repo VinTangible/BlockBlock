@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
         CalculateSpawnPositions();
 
         // Load block prefabs
-        blocks = Resources.LoadAll<Block>("Prefabs/Blocks");
+        blocks = Resources.LoadAll<Block>("Prefabs/Blocks/");
 
         // Create transform to hold all block pieces
         pieces = new GameObject("Pieces").transform;
@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
     public void DropPiece(Block block)
     {
         // Round the block's position to align with grid
-        block.transform.position = Round(block.transform.position);
+        RoundPosition(block.transform);
 
         if (IsValidPosition(block))
         {
@@ -73,11 +73,16 @@ public class GameManager : MonoBehaviour
             // Add block pieces to the grid
             foreach (Transform blockPiece in block.transform)
             {
-                grid[(int)blockPiece.position.x, (int)blockPiece.position.y] = blockPiece;
+                int roundedX = Mathf.RoundToInt(blockPiece.position.x);
+                int roundedY = Mathf.RoundToInt(blockPiece.position.y);
+
+                // The Y represents the rows and the X represents the cols
+                grid[roundedX, roundedY] = blockPiece;
 
                 // A block was placed in this row/col so mark as needing to check
-                rowsToCheck.Add((int)blockPiece.position.y);
-                colsToCheck.Add((int)blockPiece.position.x);
+                // The X is the col, and the Y is the row
+                rowsToCheck.Add(roundedY);
+                colsToCheck.Add(roundedX);
             }
 
             ClearLines();
@@ -111,14 +116,18 @@ public class GameManager : MonoBehaviour
         foreach (Block block in spawnedBlocks)
         {
             // Only check if the block hasn't been dropped yet
-            if (block.GetComponent<BoxCollider2D>().enabled)
+            if (block != null && block.GetComponent<BoxCollider2D>().enabled)
             {
+                // Scale block to Up scale before checking
+                block.ScaleToUpLayer();
+
                 for (int x = 0; x < GRID_WIDTH; x++)
                 {
                     for (int y = 0; y < GRID_HEIGHT; y++)
                     {
                         // Move block to position and check if it is a valid position
                         block.transform.position = new Vector2(x, y);
+                        RoundPosition(block.transform);
 
                         if (IsValidPosition(block))
                         {
@@ -245,10 +254,9 @@ public class GameManager : MonoBehaviour
             Block block = blocks[Random.Range(0, blocks.Length)];
 
             // Spawn the block at the respective spawn position
-            Block toSpawn = Instantiate(block, pieces);
-            toSpawn.Init(spawnPositions[i]);
-
+            Block toSpawn = Instantiate(block, spawnPositions[i], Quaternion.identity);
             spawnedBlocks[i] = toSpawn;
+            toSpawn.transform.SetParent(pieces);
         }
 
         dropCount = 0;
@@ -260,10 +268,11 @@ public class GameManager : MonoBehaviour
         foreach (Transform blockPiece in block.transform)
         {
             if (!IsInsideGrid(blockPiece.position) ||
-                grid[(int)blockPiece.position.x, (int)blockPiece.position.y] != null)
+                grid[Mathf.RoundToInt(blockPiece.position.x), Mathf.RoundToInt(blockPiece.position.y)] != null)
             {
                 return false;
             }
+
         }
 
         return true;
@@ -272,7 +281,11 @@ public class GameManager : MonoBehaviour
     // Returns true if the position is within the grid, otherwise false
     private bool IsInsideGrid(Vector2 pos)
     {
-        if (pos.x >= 0 && pos.x <= GRID_WIDTH - 1 && pos.y >= 0 && pos.y <= GRID_HEIGHT - 1)
+        int roundedX = Mathf.RoundToInt(pos.x);
+        int roundedY = Mathf.RoundToInt(pos.y);
+
+        if (roundedX >= 0 && roundedX <= GRID_WIDTH - 1 &&
+            roundedY >= 0 && roundedY <= GRID_HEIGHT - 1)
         {
             return true;
         }
@@ -280,28 +293,37 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
-    // Returns the position with rounded coordinates
-    private Vector2 Round(Vector2 pos)
+    // Rounds the parent and all its children to the nearest position (whole number)
+    private void RoundPosition(Transform parent)
     {
-        return new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
+        if (parent.childCount > 0)
+        {
+            Transform child = parent.GetChild(0);
+
+            Vector2 roundedPos = new Vector2(Mathf.Round(child.position.x), Mathf.Round(child.position.y));
+            Vector2 offset = (Vector2)child.transform.position - roundedPos;
+            parent.position = (Vector2)parent.position - offset;
+        }
+        else
+        {
+            parent.position = new Vector2(Mathf.Round(parent.position.x), Mathf.Round(parent.position.y));
+        }
     }
 
     private void CalculateSpawnPositions()
     {
         // Spawn positions are split evenly by NUM_SPAWN + 2 partitions
         // The 2 extra partitions are the edges where nothing spawns
-        int partitions = NUM_SPAWN + 1;
+        int partitions = NUM_SPAWN + 2;
+        float leftOffset = (GRID_WIDTH - 1) / partitions;
+        float widthAfterOffset = (GRID_WIDTH - 1) - (2 * leftOffset);
 
-        // X offset will be 75% of the screen
-        float xOffset = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width * (float)0.75, 0)).x;
-        float yOffset = (float)GRID_HEIGHT / (float)partitions;
-
-        Debug.Log("x: " + xOffset + " y: " + yOffset);
+        float yOffset = Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height * (float)0.15)).y;
         
         for(int i = 0; i < NUM_SPAWN; i++)
         {
-            spawnPositions[i] = new Vector2(xOffset, ((float)(i+1) * yOffset) - (float)0.5);
-            Debug.Log(spawnPositions[i]);
+            float xOffset = (float)i/(float)(NUM_SPAWN-1) * widthAfterOffset + leftOffset;
+            spawnPositions[i] = new Vector2(xOffset, yOffset);
         }
     }
 

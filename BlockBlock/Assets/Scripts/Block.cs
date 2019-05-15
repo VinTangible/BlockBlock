@@ -4,8 +4,28 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
+    public static float SMALL_SCALE = .6f;
+    
+    // Limit numRotations to be values from 0 to 3
+    [Range(0,3)]
+    public int numRotations;
+
     private Vector2 offset;
     private Vector2 spawnPosition;
+    private int[] rotations = new int[] {0, 90, 180, 270};
+
+    void Awake()
+    {
+        // Set position when block is initialized
+        spawnPosition = transform.position;
+    }
+
+    void Start()
+    {
+        // Scale and rotate when block is rendered
+        transform.localScale = new Vector2(SMALL_SCALE,SMALL_SCALE);
+        RandomRotate();
+    }
 
     // Sets the sorting layer of the block's sprites based on passed in layer name
     private void SetSortingLayer(string layerName)
@@ -18,30 +38,11 @@ public class Block : MonoBehaviour
         }
     }
 
-    public void Init(Vector2 pos)
+    private void RandomRotate()
     {
-        // Get adjusted spawn position used to center the block at spawn
-        BoxCollider2D collider = GetComponent<BoxCollider2D>();
-
-        transform.localScale = new Vector2((float)0.75, (float)0.75);
-
-        // Apply (.5, .5) offset because (.5, .5) of the block sticks out
-        spawnPosition = pos - collider.size/2 + new Vector2(.5f, .5f);
-        transform.position = spawnPosition;
+        transform.Rotate(0,0, rotations[Random.Range(0, numRotations + 1)]);
     }
 
-    public void ResetPosition()
-    {
-        if (spawnPosition != null)
-        {
-            transform.localScale = new Vector2((float)0.75, (float)0.75);
-            transform.position = spawnPosition;
-        }
-        else
-        {
-            Debug.Log("Spawn position was not set.");
-        }
-    }
 
     // Mouse Functions
     void OnMouseDown()
@@ -65,5 +66,26 @@ public class Block : MonoBehaviour
         // When mouse is released, set the piece down and set sorting layer
         SetSortingLayer(GameManager.DOWN_LAYER);
         GameManager.instance.DropPiece(this);
+    }
+
+    // Public Functions
+
+    public void ScaleToUpLayer()
+    {
+        transform.localScale = new Vector2(1, 1);
+    }
+
+    // Resets block back to its original spawn position
+    public void ResetPosition()
+    {
+        if (spawnPosition != null)
+        {
+            transform.position = spawnPosition;
+            transform.localScale = new Vector2(SMALL_SCALE,SMALL_SCALE);
+        }
+        else
+        {
+            Debug.Log("Spawn position was not set.");
+        }
     }
 }

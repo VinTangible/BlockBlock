@@ -47,7 +47,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.5, y: 0}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -72,6 +72,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e1f6b9d39c3045e68026f605a846ef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  numRotations: 1
 --- !u!1001 &1163821215160358283
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -92,7 +93,7 @@ PrefabInstance:
     - target: {fileID: 1079623349863030199, guid: c469c10af21fa411c8b207125d6213b3,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1079623349863030199, guid: c469c10af21fa411c8b207125d6213b3,
         type: 3}
@@ -172,7 +173,7 @@ PrefabInstance:
     - target: {fileID: 1079623349863030199, guid: c469c10af21fa411c8b207125d6213b3,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1079623349863030199, guid: c469c10af21fa411c8b207125d6213b3,
         type: 3}
