@@ -233,6 +233,7 @@ public class GameManager : MonoBehaviour
     public bool isGameOver() {
         //going through available blocks
         for(int i = 0; i < blocksInGame.Count; i++) {
+            blocksInGame[i].transform.localScale = new Vector3( 1, 1, 1);
             //going through grid
             for(int row = 0; row < gridWidth; row++) {
                 for(int col = 0; col < gridHeight; col++) {
@@ -243,6 +244,7 @@ public class GameManager : MonoBehaviour
                         if(CheckIsValidPosition(blocksInGame[i])) {
                             //return to spawn position and return false since it is not Game Over
                             blocksInGame[i].transform.position = blocksInGame[i].GetBlockSpawnPosition();
+                            blocksInGame[i].transform.localScale = new Vector3(( float) 0.75, (float) 0.75, 1);
                             return false;  
                         }
                     }
@@ -250,6 +252,11 @@ public class GameManager : MonoBehaviour
             }
             blocksInGame[i].transform.position = blocksInGame[i].GetBlockSpawnPosition();
         }
+
+        if(blocksInGame.Count == 0) {
+          return false;
+        }
+
         return true;
     }
 
