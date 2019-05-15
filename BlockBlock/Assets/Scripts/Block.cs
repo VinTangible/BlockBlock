@@ -10,8 +10,7 @@ public class Block : MonoBehaviour
     Vector2 spawnPosition;
     GameManager gameManager = GameManager.gameManager;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake() 
     {
         spawnPosition = this.transform.position;
     }
@@ -22,16 +21,7 @@ public class Block : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             SetSortingLayer("Clicked", 2);
-            if(gameManager.SnapToGrid(this))
-            {
-                gameManager.AddingFullRowsInColRow();
-                gameManager.ClearRowCol();
-                if(gameManager.isGameOver()) {
-                    Debug.Log("GameOver");
-                    Application.LoadLevel("GameOver");
-                }
-                gameManager.SpawnBlockWhenAllUsed();
-            }
+            gameManager.SnapToGrid(this);
         }
     }
 

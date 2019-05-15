@@ -24,10 +24,10 @@ public class GameManager : MonoBehaviour
 
     void Awake(){
       if(gameManager == null) {
-        gameManager = this;
+          gameManager = this;
       }
       else if (gameManager != this) {
-        Destroy(gameObject);
+          Destroy(gameObject);
       }
     }
 
@@ -38,7 +38,8 @@ public class GameManager : MonoBehaviour
         spawnPosition2 = new Vector2(4, (float) -4.5);
         spawnPosition3 = new Vector2(9, (float) -4.5);
         
-        blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
+        // blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
+        blocks = new GameObject[] { Resources.Load<GameObject>("Prefabs/Blocks/Square3")};
 
         SpawnBlockWhenAllUsed();
     }
@@ -111,7 +112,7 @@ public class GameManager : MonoBehaviour
     //Snaps to the Grid
     //Returns true if it does
     //Returns false if it doesn't
-    public bool SnapToGrid(Block block){
+    public void SnapToGrid(Block block){
         if(CheckIsValidPosition(block)){
             foreach(Transform blockPiece in block.transform) {
 
@@ -129,12 +130,20 @@ public class GameManager : MonoBehaviour
             blockCount--;
             block.SetSortingLayer("Snapped", 1);
             blocksInGame.Remove(block);
-            return true;
+            
+            AddingFullRowsInColRow();
+            ClearRowCol();
+            SpawnBlockWhenAllUsed();
+            if(isGameOver() && getBlockInGameCount() != 0) {
+                Debug.Log("GameOver");
+                Application.LoadLevel("GameOver");
+            }
         }
-        block.transform.position = block.GetBlockSpawnPosition();
-        block.transform.localScale = new Vector3(( float) 0.75, (float) 0.75, 1);
-        block.SetSortingLayer("Default", 0);
-        return false;
+        else{
+          block.transform.position = block.GetBlockSpawnPosition();
+          block.transform.localScale = new Vector3(( float) 0.75, (float) 0.75, 1);
+          block.SetSortingLayer("Default", 0);
+        }
     }
 
     ////////////Clearing Rows and Columns//////////////////////////
@@ -233,6 +242,7 @@ public class GameManager : MonoBehaviour
     public bool isGameOver() {
         //going through available blocks
         for(int i = 0; i < blocksInGame.Count; i++) {
+            //Scale block back to original grid size
             blocksInGame[i].transform.localScale = new Vector3( 1, 1, 1);
             //going through grid
             for(int row = 0; row < gridWidth; row++) {
@@ -243,6 +253,7 @@ public class GameManager : MonoBehaviour
                         //Check if it is a valid position
                         if(CheckIsValidPosition(blocksInGame[i])) {
                             //return to spawn position and return false since it is not Game Over
+                            Debug.Log(blocksInGame[i].GetBlockSpawnPosition() + "HELLO");
                             blocksInGame[i].transform.position = blocksInGame[i].GetBlockSpawnPosition();
                             blocksInGame[i].transform.localScale = new Vector3(( float) 0.75, (float) 0.75, 1);
                             return false;  
@@ -252,11 +263,6 @@ public class GameManager : MonoBehaviour
             }
             blocksInGame[i].transform.position = blocksInGame[i].GetBlockSpawnPosition();
         }
-
-        if(blocksInGame.Count == 0) {
-          return false;
-        }
-
         return true;
     }
 
@@ -288,5 +294,9 @@ public class GameManager : MonoBehaviour
     public void SetGridPos(Vector2 pos, Transform blockPiece)
     {
         grid[(int)pos.x, (int)pos.y] = blockPiece;
+    }
+
+    public int getBlockInGameCount() {
+        return blockCount;
     }
 }
