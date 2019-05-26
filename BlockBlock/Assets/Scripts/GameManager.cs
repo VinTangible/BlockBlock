@@ -265,9 +265,9 @@ public class GameManager : MonoBehaviour
     // TODO: make this dynamic and not hardcoded
     private void InitializeStartingPosititions()
     {
-        spawnPositions[0] = new Vector2(-5.5f, -4.5f);
-        spawnPositions[1] = new Vector2(4.0f, -4.5f);
-        spawnPositions[2] = new Vector2(14f, -4.5f);
+        spawnPositions[0] = new Vector2(-5.5f, -6.0f);
+        spawnPositions[1] = new Vector2(4.0f, -6.0f);
+        spawnPositions[2] = new Vector2(14f, -6.0f);
     }
 
     public void CheckForGameOver()
