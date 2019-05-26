@@ -24,15 +24,7 @@ public class Block : MonoBehaviour
         // have it automatically snap to the nearest valid spot on the grid
         if(Input.GetMouseButtonUp(0))
         {
-            if(GameManager.gameManager.SnapToGrid(this))
-            {
-                GameManager.gameManager.CheckRows();
-                GameManager.gameManager.CheckColumns();
-                GameManager.gameManager.ClearRowsAndColumns();
-
-                // if block was successfully placed, spawn new block
-                GameManager.gameManager.SpawnNextBlock(startingPosition);
-            }
+            GameManager.gameManager.SnapToGrid(this);
         }
     }
 }

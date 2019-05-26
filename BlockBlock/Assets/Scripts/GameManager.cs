@@ -2,17 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine.SceneManagement;
+
 public class GameManager : MonoBehaviour
 {
-    public static int gridWidth = 10;
-    public static int gridHeight = 10;
+    public static int GRID_WIDTH = 10;
+    public static int GRID_HEIGHT = 10;
+    public static int NUM_SPAWN = 3;
+
+    public static int numDropped = 0;
 
     public static GameManager gameManager = null;
 
-    public static Transform[,] grid = new Transform[gridWidth, gridHeight];
+    public static Transform[,] grid = new Transform[GRID_WIDTH, GRID_HEIGHT];
 
     public List<int> rowsToDelete;
     public List<int> columnsToDelete;
+
+    private Vector2[] spawnPositions = new Vector2[NUM_SPAWN];
+    private List<Block> blocksToPlace = new List<Block>();
 
     // Start is called before the first frame update
     void Start()
@@ -36,16 +44,25 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        InitializeStartingPosititions();
+        SpawnBlocks();
     }
 
-    // spawns a new block in the starting position of the recently placed block
-    public void SpawnNextBlock(Vector2 startingPosition)
+    // spawns a new set of blocks after all blocks have been placed
+    public void SpawnBlocks()
     {
-        GameObject nextBlock = (GameObject)Instantiate(
-            Resources.Load(GetRandomBlock(), typeof(GameObject)),
-                startingPosition, Quaternion.identity);
+        for(int i = 0; i < NUM_SPAWN; ++i)
+        {
+            GameObject block = GetRandomBlock();
+            GameObject nextBlock = (GameObject)Instantiate(block, spawnPositions[i], Quaternion.identity);
         
-        RotateBlock(nextBlock.GetComponentInParent<Block>());
+            RotateBlock(nextBlock.GetComponentInParent<Block>());
+
+            blocksToPlace.Add(nextBlock.GetComponentInParent<Block>());
+        }
+
+        numDropped = 0;
     }
 
     public void ClearRowsAndColumns()
@@ -66,9 +83,9 @@ public class GameManager : MonoBehaviour
 
     public void CheckRows()
     {
-        for(int y = 0; y < gridHeight; ++y)
+        for(int y = 0; y < GRID_HEIGHT; ++y)
         {
-            for(int x = 0; x < gridWidth; ++x)
+            for(int x = 0; x < GRID_WIDTH; ++x)
             {
                 if(grid[x, y] == null)
                 {
@@ -76,7 +93,7 @@ public class GameManager : MonoBehaviour
                     break;
                 }
 
-                if(x == gridWidth - 1)
+                if(x == GRID_WIDTH - 1)
                 {
                     // mark this row for deletion
                     rowsToDelete.Add(y);
@@ -87,9 +104,9 @@ public class GameManager : MonoBehaviour
 
     public void CheckColumns()
     {
-        for(int x = 0; x < gridWidth; ++x)
+        for(int x = 0; x < GRID_WIDTH; ++x)
         {
-            for(int y = 0; y < gridHeight; ++y)
+            for(int y = 0; y < GRID_HEIGHT; ++y)
             {
                 if(grid[x, y] == null)
                 {
@@ -97,7 +114,7 @@ public class GameManager : MonoBehaviour
                     break;
                 }
 
-                if(y == gridHeight - 1)
+                if(y == GRID_HEIGHT - 1)
                 {
                     // mark this column for deletion
                     columnsToDelete.Add(x);
@@ -108,7 +125,7 @@ public class GameManager : MonoBehaviour
     
     public void ClearRowAt(int y)
     {
-        for(int x = 0; x < gridWidth; ++x)
+        for(int x = 0; x < GRID_WIDTH; ++x)
         {
             if(grid[x, y] != null)
             {
@@ -120,7 +137,7 @@ public class GameManager : MonoBehaviour
 
     public void ClearColumnAt(int x)
     {
-        for(int y = 0; y < gridHeight; ++y)
+        for(int y = 0; y < GRID_HEIGHT; ++y)
         {
             if(grid[x, y] != null)
             {
@@ -133,7 +150,7 @@ public class GameManager : MonoBehaviour
     // upon letting go of the block, this function will round off
     // the block's position to the nearest integer to snap it to
     // the closest available grid space
-    public bool SnapToGrid(Block block)
+    public void SnapToGrid(Block block)
     {
         if(IsInsideGrid(block) && IsValidPlacement(block))
         {
@@ -158,13 +175,28 @@ public class GameManager : MonoBehaviour
             // this prevents multiple blocks from spawning after this current block is placed
             block.enabled = false;
 
-            return true;
+            ++numDropped;
+            Debug.Log("num dropped: " + numDropped);
+
+            CheckRows();
+            CheckColumns();
+            ClearRowsAndColumns();
+            
+            if(numDropped == NUM_SPAWN)
+            {
+                Debug.Log("Clearing list of blocks to place");
+                blocksToPlace.Clear();
+                Debug.Log("Spawning new blocks!");
+                SpawnBlocks();
+            }
+
+            CheckForGameOver();
         }
-
-        // else, bring block back to original spawn position
-        block.transform.position = block.startingPosition;
-
-        return false;
+        else
+        {
+            // else, bring block back to original spawn position
+            block.transform.position = block.startingPosition;
+        }
     }
 
     // checks if a block is inside the grid by iterating through
@@ -176,9 +208,9 @@ public class GameManager : MonoBehaviour
             Vector2 roundedPosition = Round(blockPiece.transform.position);
 
             if((int) roundedPosition.x < 0 ||
-               (int) roundedPosition.x > gridWidth - 1 ||
+               (int) roundedPosition.x > GRID_WIDTH - 1 ||
                (int) roundedPosition.y < 0 || 
-               (int) roundedPosition.y > gridHeight - 1)
+               (int) roundedPosition.y > GRID_HEIGHT - 1)
             {
                 return false;
             }
@@ -206,8 +238,66 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
+    private bool IsValidDrop(Block block)
+    {
+        for(int x = 0; x < GRID_WIDTH; ++x)
+        {
+            for(int y = 0; y < GRID_HEIGHT; ++y)
+            {
+                Vector2 originalPosition = block.transform.position;
+                block.transform.position = new Vector2(x, y);
+
+                if(IsInsideGrid(block) && IsValidPlacement(block))
+                {
+                    block.transform.position = originalPosition;
+                    return true;
+                }
+                else
+                {
+                    block.transform.position = originalPosition;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // TODO: make this dynamic and not hardcoded
+    private void InitializeStartingPosititions()
+    {
+        spawnPositions[0] = new Vector2(-5.5f, -4.5f);
+        spawnPositions[1] = new Vector2(4.0f, -4.5f);
+        spawnPositions[2] = new Vector2(14f, -4.5f);
+    }
+
+    public void CheckForGameOver()
+    {
+        foreach(Block block in blocksToPlace)
+        {
+            foreach(Transform blockPiece in block.transform)
+            {
+                // **********************************************************************
+                // TODO: make one BoxCollider for the entire block rather than each
+                // child have its own BoxCollider
+                // **********************************************************************
+                if(blockPiece.GetComponent<BoxCollider2D>().enabled)
+                {
+                    if(IsValidDrop(block))
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        Debug.Log("Game Over");
+
+        // load Game Over screen
+        SceneManager.LoadScene("GameOver");
+    }
+    
     // Rounds the x and y positions to the nearest integer
-    public Vector2 Round(Vector2 position)
+    private Vector2 Round(Vector2 position)
     {
         return new Vector2(Mathf.Round(position.x), Mathf.Round(position.y));
     }
@@ -215,7 +305,7 @@ public class GameManager : MonoBehaviour
     // Rotates the block component in increments of 90, 180, or 270 degrees.
     // Squares don't need to be rotated and the long pieces only have to be rotated 90 degrees.
     // The el pieces are the ones that have full rotation allowed.
-    void RotateBlock(Block block)
+    private void RotateBlock(Block block)
     {
         if(block.allowRotation)
         {
@@ -232,21 +322,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // TODO: implement this correctly to not hardcode starting positions
+    // private Vector2 GetStartingPosition(GameObject block)
+    // {
+    //     BoxCollider2D box = block.GetComponent<BoxCollider2D>();
+
+    //     return box.transform.position;
+    // }
+
     // retrieves a random block prefab from the resources folder
-    string GetRandomBlock()
+    private GameObject GetRandomBlock()
     {
         string prefabPath = "Prefabs\\Blocks\\";
 
-        string[] blocks = {"El2", "El3", "Long2", "Long3", "Long4", "Long5", 
-            "Square1", "Square2", "Square3"};
+        GameObject[] blocks = Resources.LoadAll<GameObject>(prefabPath);
 
         int randomBlock = Random.Range(0, blocks.Length);
 
-        return prefabPath + blocks[randomBlock];
+        return blocks[randomBlock];
     }
 
     // returns a random rotation in increments of 90
-    int GetRandomRotation(bool isLongPiece)
+    private int GetRandomRotation(bool isLongPiece)
     {
         int[] rotations = {0, 90, 180, 270};
         int randomRotation = 0;
