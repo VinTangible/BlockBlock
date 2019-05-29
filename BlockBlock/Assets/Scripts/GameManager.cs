@@ -38,8 +38,8 @@ public class GameManager : MonoBehaviour
         spawnPosition2 = new Vector2(4, (float) -4.5);
         spawnPosition3 = new Vector2(9, (float) -4.5);
         
-        // blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
-        blocks = new GameObject[] { Resources.Load<GameObject>("Prefabs/Blocks/Square3")};
+        blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
+        //blocks = new GameObject[] { Resources.Load<GameObject>("Prefabs/Blocks/Square3")};
 
         SpawnBlockWhenAllUsed();
     }
@@ -59,7 +59,17 @@ public class GameManager : MonoBehaviour
         GameObject block = blocks[Random.Range(0, blocks.Length)];
         // Spawn the block at the spawn position
         GameObject toSpawn = Instantiate(block, pos, Quaternion.identity);
+        //Debug.Log(pos.x);
+        // Vector2 blockSize = block.GetComponent<BoxCollider2D>().bounds.size;
+        // Vector2 tempPos = new Vector2((float) (pos.x + blockSize.x/2), (float)(pos.y + blockSize.y/2));
+        // Debug.Log(pos.x + blockSize.x/2);
+        // Debug.Log(blockSize.x + "Helow");
+        // toSpawn.GetComponent<Transform>().position = tempPos;
+        Vector2 blockSize = toSpawn.GetComponent<Block>().GetBlockSize();
+        Vector2 tempPos = new Vector2((float) (pos.x + blockSize.x), (float)(pos.y + blockSize.y));
+        toSpawn.GetComponent<Transform>().position = tempPos;
         toSpawn.GetComponent<Block>().RotateBlock();
+        toSpawn.GetComponent<Transform>().position = toSpawn.GetComponent<Block>().GetBlockSpawnPosition();
         toSpawn.GetComponent<Transform>().localScale = new Vector3( (float) 0.75, (float) 0.75, 1);
         blocksInGame.Add(toSpawn.GetComponent<Block>());
 

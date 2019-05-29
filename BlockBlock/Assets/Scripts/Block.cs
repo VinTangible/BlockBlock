@@ -7,6 +7,10 @@ public class Block : MonoBehaviour
     public bool allowRotation;
     public bool limitRotation;
 
+    public bool el2;
+    public bool el3;
+
+
     Vector2 spawnPosition;
     GameManager gameManager = GameManager.gameManager;
 
@@ -37,12 +41,27 @@ public class Block : MonoBehaviour
             //Debug.Log("LIMIT Here");
             randomIndex = Random.Range(0, limitDegree.Length);
             GetComponent<Transform>().Rotate(0, 0, limitDegree[randomIndex]);
+            if(randomIndex == 1) {
+                spawnPosition = new Vector2(spawnPosition.x, spawnPosition.y);
+                GetComponent<Transform>().position = spawnPosition;
+            }
         }
         else if(allowRotation)
         {
             //Debug.Log("Allow Here");
             randomIndex = Random.Range(0, allowDegree.Length);
             GetComponent<Transform>().Rotate(0, 0, allowDegree[randomIndex]);
+            if(randomIndex > 1) {
+                if(el2) {
+                    spawnPosition = new Vector2(spawnPosition.x, (float)(spawnPosition.y + GetBlockSize().y - 0.25));
+                    GetComponent<Transform>().position = spawnPosition;
+                }
+                else if(el3) {
+                    spawnPosition = new Vector2(spawnPosition.x, (float)(spawnPosition.y + GetBlockSize().y + 0.5));
+                    GetComponent<Transform>().position = spawnPosition;                    
+                }
+            }
+
         }
     }
 
@@ -59,4 +78,7 @@ public class Block : MonoBehaviour
         return spawnPosition;
     }
 
+    public Vector2 GetBlockSize() {
+        return GetComponent<BoxCollider2D>().bounds.size;
+    }
 }
