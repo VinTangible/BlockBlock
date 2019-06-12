@@ -31,6 +31,8 @@ public class BlockPiece : MonoBehaviour
     {
         // Calculate offset of the mouse position and starting position of parent when drag begins
         offset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.parent.position;
+
+        transform.parent.GetComponent<Block>().SetSortingLayer(true);
     }
 
     void OnMouseDrag()

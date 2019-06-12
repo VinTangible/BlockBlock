@@ -25,6 +25,18 @@ public class Block : MonoBehaviour
         if(Input.GetMouseButtonUp(0))
         {
             GameManager.gameManager.SnapToGrid(this);
+            SetSortingLayer(false);
+        }
+    }
+
+    // Sets the sorting layer of the block's sprites based on passed in layer name
+    public void SetSortingLayer(bool up)
+    {   
+        int change = up ? 1 : 0;
+        foreach (Transform child in transform)
+        {
+            SpriteRenderer sprite = child.GetComponent<SpriteRenderer>();
+            sprite.sortingOrder = change;
         }
     }
 }
