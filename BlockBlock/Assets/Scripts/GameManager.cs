@@ -16,9 +16,11 @@ public class GameManager : MonoBehaviour
     public static string UP_LAYER = "Up";
     public static string DOWN_LAYER = "Down";
 
+    public GameObject playAgainButton;
+
     int dropCount = 0;
 
-    Block[] blocks;    // Used to store Block prefabs
+    Block[] blocks;         // Used to store Block prefabs
     Transform pieces;       // Used to store Blocks in Scene Hierarchy
 
     Transform[,] grid = new Transform[GRID_WIDTH, GRID_HEIGHT];
@@ -44,6 +46,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        playAgainButton.SetActive(false);
         CalculateSpawnPositions();
 
         // Load block prefabs
@@ -54,6 +57,10 @@ public class GameManager : MonoBehaviour
 
         // Spawn inital block
         SpawnBlocks();
+    }
+
+    public void RestartGame() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     // Drops the Block onto the board if valid
@@ -329,7 +336,15 @@ public class GameManager : MonoBehaviour
 
     private void GameOver()
     {
-        Debug.Log("Game Over");
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        DisableBlocks();
+        playAgainButton.SetActive(true);
+    }
+    
+    private void DisableBlocks()
+    {
+        foreach (Block block in spawnedBlocks)
+        {
+            block.GetComponent<BoxCollider2D>().enabled = false;
+        }
     }
 }
