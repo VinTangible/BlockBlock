@@ -5,18 +5,43 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     Vector2 spawnPosition;
+    Vector2 spawnPosition2;
+    Vector2 spawnPosition3;
+
     GameObject[] blocks;
 
+    List<int> rowFullList = new List<int>();
+    List<int> colFullList = new List<int>();
+    IList<Block> blocksInGame = new List<Block>();
+
+    int blockCount = 0;
+    public static GameManager gameManager = null;
+
+    public static int gridWidth = 10;
+    public static int gridHeight = 10;
+
+    public static Transform[,] grid = new Transform[gridWidth, gridHeight];
+
+    void Awake(){
+      if(gameManager == null) {
+          gameManager = this;
+      }
+      else if (gameManager != this) {
+          Destroy(gameObject);
+      }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        // Currently spawn position is at 75% screen width, and 50% screen height
-        spawnPosition = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
-        spawnPosition.Scale(new Vector2((float).75, (float).5));
+        spawnPosition = new Vector2(-2, (float) -4.5);
+        spawnPosition2 = new Vector2(4, (float) -4.5);
+        spawnPosition3 = new Vector2(9, (float) -4.5);
+        
         blocks = Resources.LoadAll<GameObject>("Prefabs/Blocks");
+        //blocks = new GameObject[] { Resources.Load<GameObject>("Prefabs/Blocks/Square3")};
 
-        SpawnBlock();
+        SpawnBlockWhenAllUsed();
     }
 
     // Update is called once per frame
@@ -25,14 +50,263 @@ public class GameManager : MonoBehaviour
         
     }
 
-    // Private Functions
+    ////////////////////////Spawn Blocks Functions///////////////////////////
 
-    private void SpawnBlock()
+    //Spawns Initial Blocks
+    public void SpawnBlock(Vector2 pos)
     {
         // Get a random block
         GameObject block = blocks[Random.Range(0, blocks.Length)];
-
         // Spawn the block at the spawn position
-        GameObject toSpawn = Instantiate(block, spawnPosition, Quaternion.identity);
+        GameObject toSpawn = Instantiate(block, pos, Quaternion.identity);
+        //Debug.Log(pos.x);
+        // Vector2 blockSize = block.GetComponent<BoxCollider2D>().bounds.size;
+        // Vector2 tempPos = new Vector2((float) (pos.x + blockSize.x/2), (float)(pos.y + blockSize.y/2));
+        // Debug.Log(pos.x + blockSize.x/2);
+        // Debug.Log(blockSize.x + "Helow");
+        // toSpawn.GetComponent<Transform>().position = tempPos;
+        Vector2 blockSize = toSpawn.GetComponent<Block>().GetBlockSize();
+        Vector2 tempPos = new Vector2((float) (pos.x + blockSize.x), (float)(pos.y + blockSize.y));
+        toSpawn.GetComponent<Transform>().position = tempPos;
+        toSpawn.GetComponent<Block>().RotateBlock();
+        toSpawn.GetComponent<Transform>().position = toSpawn.GetComponent<Block>().GetBlockSpawnPosition();
+        toSpawn.GetComponent<Transform>().localScale = new Vector3( (float) 0.75, (float) 0.75, 1);
+        blocksInGame.Add(toSpawn.GetComponent<Block>());
+
+        //blocksInGame.Add(block);
+    }
+
+    //Spawns the blocks when the user uses all blocks in the game
+    public void SpawnBlockWhenAllUsed(){
+        if(blockCount <= 0){
+            SpawnBlock(spawnPosition);
+            SpawnBlock(spawnPosition2);
+            SpawnBlock(spawnPosition3);
+            blockCount = 3;
+        }
+    }
+
+    //////////////Grid Snapping Functions/////////////////////
+
+    //Check if the block is inside the grid
+    private bool CheckIsInsideGrid(Vector2 pos)
+    {
+        return ((int)pos.y < gridHeight && (int)pos.y >= 0 && (int)pos.x < gridWidth && (int)pos.x >= 0);
+    }
+
+    // Checks if the current piece is inside the grid 
+    // and is not conflicting with an existing block
+    private bool CheckIsValidPosition(Block block)
+    {
+        foreach (Transform blockPiece in block.transform)
+        {
+            Vector2 pos = gameManager.Round(blockPiece.position);
+
+            //Checks inside the grid
+            if (CheckIsInsideGrid(pos) == false)
+            {
+                return false;
+            }
+
+            //Checks if the current place in the grid is empty or not
+            if (GetTransformAtGridPos(pos) != null &&
+                GetTransformAtGridPos(pos).parent != block.transform)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    //Snaps to the Grid
+    //Returns true if it does
+    //Returns false if it doesn't
+    public void SnapToGrid(Block block){
+        if(CheckIsValidPosition(block)){
+            foreach(Transform blockPiece in block.transform) {
+
+                Vector2 newBlockPos = Round(block.transform.position);
+                Vector2 blockGridPos = Round(blockPiece.position);
+                //Set the current transform piece to snap to the closest grid block
+                block.transform.position = newBlockPos;
+                //Set the Grid to have the transform piece
+                SetGridPos(blockGridPos, blockPiece);
+                //Disable each block piece
+                blockPiece.GetComponent<BoxCollider2D>().enabled = false;
+            }
+            //Disable block
+            block.enabled = false;
+            blockCount--;
+            block.SetSortingLayer("Snapped", 1);
+            blocksInGame.Remove(block);
+            
+            AddingFullRowsInColRow();
+            ClearRowCol();
+            SpawnBlockWhenAllUsed();
+            if(isGameOver() && getBlockInGameCount() != 0) {
+                Debug.Log("GameOver");
+                Application.LoadLevel("GameOver");
+            }
+        }
+        else{
+          block.transform.position = block.GetBlockSpawnPosition();
+          block.transform.localScale = new Vector3(( float) 0.75, (float) 0.75, 1);
+          block.SetSortingLayer("Default", 0);
+        }
+    }
+
+    ////////////Clearing Rows and Columns//////////////////////////
+
+    //Checking full row
+    //Returns true if the row is full
+    private bool isFullRowAt(int y)
+    {
+        for(int row = 0; row < gridWidth; row++)
+        {
+            if(grid[row , y] == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //Checking full col
+    //Return true if the current column is full
+    private bool isFullColAt(int x)
+    {
+        for(int col = 0; col < gridHeight; col++)
+        {
+            if(grid[x, col] == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //Adds the row number and col number into a list if that
+    //row or column if full
+    public void AddingFullRowsInColRow()
+    {
+        //Adding row number into list
+        for(int row = 0; row < gridWidth; row++)
+        {
+            if (isFullColAt(row))
+            {
+                colFullList.Add(row);
+            }
+        }
+
+        //Adding col number into list
+        for(int col = 0; col < gridHeight; col++)
+        {
+            if (isFullRowAt(col))
+            {
+                rowFullList.Add(col);
+            }
+        }
+    }
+
+    //Go through each row and column number in the list
+    //and destroying and deleting the blocks from the grid 
+    public void ClearRowCol()
+    {
+        //Can't manipulate data structure at the same time as transversing
+        //Gives Error
+
+        foreach(int el in rowFullList)
+        {
+            for(int row = 0; row < gridWidth; row++)
+            {
+              //making sure that we arent destroying a null piece
+              if(grid[row, el] != null){
+                  Destroy(grid[row, el].gameObject);
+                  grid[row, el] = null;
+              }
+            }
+        }
+
+        foreach (int el in colFullList)
+        {
+            for (int col = 0; col < gridHeight; col++)
+            {
+                //making sure that we arent destroying a null piece
+                if(grid[el, col] != null){
+                    Destroy(grid[el, col].gameObject);
+                    grid[el, col] = null;
+                }
+            }
+        }
+
+        ClearBothList();
+    }
+
+    private void ClearBothList() {
+        rowFullList.Clear();
+        colFullList.Clear();
+    }
+
+    //////////////Checking For Valid Positions/////////////////
+    public bool isGameOver() {
+        //going through available blocks
+        for(int i = 0; i < blocksInGame.Count; i++) {
+            //Scale block back to original grid size
+            blocksInGame[i].transform.localScale = new Vector3( 1, 1, 1);
+            //going through grid
+            for(int row = 0; row < gridWidth; row++) {
+                for(int col = 0; col < gridHeight; col++) {
+                    //Check if the current grid block is not filled
+                    if(grid[row, col] == null) {
+                        blocksInGame[i].transform.position = new Vector2(row, col);
+                        //Check if it is a valid position
+                        if(CheckIsValidPosition(blocksInGame[i])) {
+                            //return to spawn position and return false since it is not Game Over
+                            Debug.Log(blocksInGame[i].GetBlockSpawnPosition() + "HELLO");
+                            blocksInGame[i].transform.position = blocksInGame[i].GetBlockSpawnPosition();
+                            blocksInGame[i].transform.localScale = new Vector3(( float) 0.75, (float) 0.75, 1);
+                            return false;  
+                        }
+                    }
+                }
+            }
+            blocksInGame[i].transform.position = blocksInGame[i].GetBlockSpawnPosition();
+        }
+        return true;
+    }
+
+    //////////////Utility Functions//////////////////////////
+
+    //Round the position of the block
+    public Vector2 Round (Vector2 pos)
+    {
+        return new Vector2(Mathf.Round(pos.x), Mathf.Round(pos.y));
+    }
+    
+    //-Getter Functions
+    
+    //Get the transform block at a certain location
+    private Transform GetTransformAtGridPos(Vector2 pos)
+    {
+        if (!CheckIsInsideGrid(pos))
+        {
+            return null;
+        }
+        else
+        {
+            return grid[(int)pos.x, (int)pos.y];
+        }
+    }
+    
+    //Setters
+    //Set the grid position
+    public void SetGridPos(Vector2 pos, Transform blockPiece)
+    {
+        grid[(int)pos.x, (int)pos.y] = blockPiece;
+    }
+
+    public int getBlockInGameCount() {
+        return blockCount;
     }
 }
