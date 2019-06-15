@@ -14,17 +14,20 @@ public class Block : MonoBehaviour
     private Vector2 spawnPosition;
     private int[] rotations = new int[] {0, 90, 180, 270};
 
+    // Initializing happens here
     void Awake()
     {
         // Set position when block is initialized
         spawnPosition = transform.position;
+
+        // Scale and rotate when block is rendered
+        transform.localScale = new Vector2(SMALL_SCALE,SMALL_SCALE);
+        RandomRotate();
     }
 
     void Start()
     {
-        // Scale and rotate when block is rendered
-        transform.localScale = new Vector2(SMALL_SCALE,SMALL_SCALE);
-        RandomRotate();
+        
     }
 
     // Sets the sorting layer of the block's sprites based on passed in layer name
