@@ -126,7 +126,7 @@ public class GameManager : MonoBehaviour
             if (block != null && block.GetComponent<BoxCollider2D>().enabled)
             {
                 // Scale block to Up scale before checking
-                block.ScaleToUpLayer();
+                block.ResetScale();
 
                 for (int x = 0; x < GRID_WIDTH; x++)
                 {
@@ -264,6 +264,9 @@ public class GameManager : MonoBehaviour
             Block toSpawn = Instantiate(block, spawnPositions[i], Quaternion.identity);
             spawnedBlocks[i] = toSpawn;
             toSpawn.transform.SetParent(pieces);
+
+            // Apply random rotation to block
+            RotateBlock(toSpawn);
         }
 
         dropCount = 0;
@@ -279,7 +282,6 @@ public class GameManager : MonoBehaviour
             {
                 return false;
             }
-
         }
 
         return true;
@@ -298,6 +300,13 @@ public class GameManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    // Rotates block randomly by 90 degree increments around z axis
+    private void RotateBlock(Block block)
+    {
+        int[] rotations = new int[] {0, 90, 180, 270};
+        block.transform.Rotate(0,0, rotations[Random.Range(0, block.numRotations + 1)]);
     }
 
     // Rounds the parent and all its children to the nearest position (whole number)

@@ -38,15 +38,6 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Board
-    uniqueID: 2265497019
-    locked: 0
-  - name: Down
-    uniqueID: 2459531215
-    locked: 0
-  - name: Up
-    uniqueID: 3314402623
-    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

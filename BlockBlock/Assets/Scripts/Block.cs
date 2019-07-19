@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    public static float SMALL_SCALE = .6f;
+    public float SCALE = .6f;
     
     // Limit numRotations to be values from 0 to 3
     [Range(0,3)]
@@ -12,7 +12,6 @@ public class Block : MonoBehaviour
 
     private Vector2 offset;
     private Vector2 spawnPosition;
-    private int[] rotations = new int[] {0, 90, 180, 270};
 
     // Initializing happens here
     void Awake()
@@ -20,42 +19,30 @@ public class Block : MonoBehaviour
         // Set position when block is initialized
         spawnPosition = transform.position;
 
-        // Scale and rotate when block is rendered
-        transform.localScale = new Vector2(SMALL_SCALE,SMALL_SCALE);
-        RandomRotate();
+        // Scale down block when rendered
+        ScaleDown();
     }
 
-    void Start()
-    {
-        
-    }
-
-    // Sets the sorting layer of the block's sprites based on passed in layer name
-    private void SetSortingLayer(string layerName)
+    // Increments or decrements sorting layer based on passed in bool
+    private void SetSortingLayer(bool up)
     {   
+        int change = up ? 1 : -1;
         foreach (Transform child in transform)
         {
             SpriteRenderer sprite = child.GetComponent<SpriteRenderer>();
-            sprite.sortingOrder = SortingLayer.NameToID(layerName);
-            sprite.sortingLayerName = layerName;
+            sprite.sortingOrder += change;
         }
     }
-
-    private void RandomRotate()
-    {
-        transform.Rotate(0,0, rotations[Random.Range(0, numRotations + 1)]);
-    }
-
 
     // Mouse Functions
     void OnMouseDown()
     {
         // Calculate offset of the mouse position and starting position of parent when drag begins
         offset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        transform.localScale = new Vector2(1, 1);
+        ResetScale();
 
         // Set layer of game object to "Up"
-        SetSortingLayer(GameManager.UP_LAYER);
+        SetSortingLayer(true);
     }
 
     void OnMouseDrag()
@@ -67,15 +54,20 @@ public class Block : MonoBehaviour
     void OnMouseUp()
     {
         // When mouse is released, set the piece down and set sorting layer
-        SetSortingLayer(GameManager.DOWN_LAYER);
+        SetSortingLayer(false);
         GameManager.instance.DropPiece(this);
     }
 
     // Public Functions
 
-    public void ScaleToUpLayer()
+    public void ResetScale()
     {
         transform.localScale = new Vector2(1, 1);
+    }
+
+    public void ScaleDown()
+    {
+        transform.localScale = new Vector2(SCALE,SCALE);
     }
 
     // Resets block back to its original spawn position
@@ -84,7 +76,7 @@ public class Block : MonoBehaviour
         if (spawnPosition != null)
         {
             transform.position = spawnPosition;
-            transform.localScale = new Vector2(SMALL_SCALE,SMALL_SCALE);
+            ScaleDown();
         }
         else
         {
