@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    public float SCALE = .6f;
+    public float SCALE = .6f; // Used for scaling down blocks when in their spawn positions
     
     // Limit numRotations to be values from 0 to 3
     [Range(0,3)]
     public int numRotations;
 
-    private Vector2 offset;
+    private Vector2 mouseClickOffset; // Offset of mouse click from the block's origin
     private Vector2 spawnPosition;
 
     // Initializing happens here
@@ -38,7 +38,7 @@ public class Block : MonoBehaviour
     void OnMouseDown()
     {
         // Calculate offset of the mouse position and starting position of parent when drag begins
-        offset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        mouseClickOffset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         ResetScale();
 
         // Set layer of game object to "Up"
@@ -48,7 +48,7 @@ public class Block : MonoBehaviour
     void OnMouseDrag()
     {
         Vector2 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = newPosition - offset;
+        transform.position = newPosition - mouseClickOffset;
     }
 
     void OnMouseUp()
