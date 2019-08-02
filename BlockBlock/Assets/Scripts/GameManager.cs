@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class GameManager : MonoBehaviour
     public GameObject playAgainButton;
 
     int dropCount = 0;
+    private int score = 0;
 
     Block[] blocks;         // Used to store Block prefabs
     Transform pieces;       // Used to store Blocks in Scene Hierarchy
@@ -57,6 +59,8 @@ public class GameManager : MonoBehaviour
 
         // Spawn inital block
         SpawnBlocks();
+
+        ResetScore();
     }
 
     public void RestartGame() {
@@ -189,6 +193,8 @@ public class GameManager : MonoBehaviour
         {
             ClearLine(col, false);
         }
+
+        UpdateScore(rowsToClear.Count + colsToClear.Count);
 
         // Clear hashsets used to indicate which rows/cols to check
         rowsToCheck.Clear();
@@ -355,5 +361,22 @@ public class GameManager : MonoBehaviour
         {
             block.GetComponent<BoxCollider2D>().enabled = false;
         }
+    }
+
+    // TODO: move to own ScoreManager if scoring gets more complex
+    // Updates the score based on number of rows/cols cleared
+    private void UpdateScore(int amount)
+    {
+        score += amount * 10;
+    }
+
+    private void ResetScore()
+    {
+        score = 0;
+    }
+
+    public int getScore()
+    {
+        return score;
     }
 }
