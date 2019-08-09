@@ -42,10 +42,10 @@ public class Block : MonoBehaviour
             randomIndex = Random.Range(0, limitDegree.Length);
             GetComponent<Transform>().Rotate(0, 0, limitDegree[randomIndex]);
             //position the block for vertical long blocks
-            if(randomIndex == 1) {
-                spawnPosition = new Vector2(spawnPosition.x, spawnPosition.y);
-                GetComponent<Transform>().position = spawnPosition;
-            }
+            // if(randomIndex == 1) {
+            //     spawnPosition = new Vector2(spawnPosition.x, spawnPosition.y);
+            //     GetComponent<Transform>().position = spawnPosition;
+            // }
         }
         else if(allowRotation)
         {

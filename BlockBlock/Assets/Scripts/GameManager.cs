@@ -59,12 +59,6 @@ public class GameManager : MonoBehaviour
         GameObject block = blocks[Random.Range(0, blocks.Length)];
         // Spawn the block at the spawn position
         GameObject toSpawn = Instantiate(block, pos, Quaternion.identity);
-        //Debug.Log(pos.x);
-        // Vector2 blockSize = block.GetComponent<BoxCollider2D>().bounds.size;
-        // Vector2 tempPos = new Vector2((float) (pos.x + blockSize.x/2), (float)(pos.y + blockSize.y/2));
-        // Debug.Log(pos.x + blockSize.x/2);
-        // Debug.Log(blockSize.x + "Helow");
-        // toSpawn.GetComponent<Transform>().position = tempPos;
         Vector2 blockSize = toSpawn.GetComponent<Block>().GetBlockSize();
         Vector2 tempPos = new Vector2((float) (pos.x + blockSize.x), (float)(pos.y + blockSize.y));
         toSpawn.GetComponent<Transform>().position = tempPos;
