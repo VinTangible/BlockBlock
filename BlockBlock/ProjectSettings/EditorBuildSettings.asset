@@ -5,7 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+    path: Assets/Scenes/Start Menu.unity
+    guid: b807ac3eab87749b2b6e5d11363f32ff
+  - enabled: 1
+    path: Assets/Scenes/Main.unity
+    guid: 16eac817131d54c5894c344653046ed7
+  - enabled: 1
+    path: Assets/Scenes/Timer Mode.unity
+    guid: b7badf739cf0943338ae8b4c9b0e24d5
   m_configObjects: {}

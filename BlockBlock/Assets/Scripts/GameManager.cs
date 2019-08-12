@@ -12,10 +12,7 @@ public class GameManager : MonoBehaviour
     public static int GRID_HEIGHT = 10;
     public static int NUM_SPAWN = 3;
 
-    // Name of sorting layers
-    public static string UP_LAYER = "Up";
-    public static string DOWN_LAYER = "Down";
-
+    public static bool timerMode = false;
     public GameObject playAgainButton;
 
     int dropCount = 0;
@@ -111,6 +108,12 @@ public class GameManager : MonoBehaviour
             block.ResetPosition();
         }
 
+    }
+
+    public void GameOver()
+    {
+        DisableBlocks();
+        playAgainButton.SetActive(true);
     }
 
     // Private Functions
@@ -341,12 +344,6 @@ public class GameManager : MonoBehaviour
             float xOffset = (float)i/(float)(NUM_SPAWN-1) * widthAfterOffset + leftOffset;
             spawnPositions[i] = new Vector2(xOffset, yOffset);
         }
-    }
-
-    private void GameOver()
-    {
-        DisableBlocks();
-        playAgainButton.SetActive(true);
     }
     
     private void DisableBlocks()
