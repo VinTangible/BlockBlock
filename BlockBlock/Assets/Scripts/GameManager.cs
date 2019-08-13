@@ -363,7 +363,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // TODO: move to own ScoreManager if scoring gets more complex
     // Updates the score based on number of rows/cols cleared
     private void UpdateScore(int amount)
     {
