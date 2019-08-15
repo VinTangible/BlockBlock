@@ -205,7 +205,11 @@ public class GameManager : MonoBehaviour
             {
                 if (grid[x, index] != null)
                 {
-                    Destroy(grid[x, index].gameObject);
+                    // set trigger to transition to the destroy animation
+                    grid[x, index].gameObject.GetComponent<Animator>().SetTrigger("DestroyAnimation");
+
+                    // wait 1 second to allow the animation to finish before destroying the block piece
+                    Destroy(grid[x, index].gameObject, 1f);
                     grid[x, index] = null;
                 }
             }
@@ -217,7 +221,11 @@ public class GameManager : MonoBehaviour
             {
                 if (grid[index, y] != null)
                 {
-                    Destroy(grid[index, y].gameObject);
+                    // set trigger to transition to the destroy animation
+                    grid[index, y].gameObject.GetComponent<Animator>().SetTrigger("DestroyAnimation");
+
+                    // wait 1 second to allow the animation to finish before destroying the block piece
+                    Destroy(grid[index, y].gameObject, 1f);
                     grid[index, y] = null;
                 }
             }
@@ -267,6 +275,13 @@ public class GameManager : MonoBehaviour
 
             // Apply random rotation to block
             RotateBlock(toSpawn);
+
+            // iterate through each of the block's child pieces to trigger their spawn animations
+            foreach(Transform blockPiece in toSpawn.transform)
+            {
+                // set the trigger to transition to the spawn animation
+                blockPiece.gameObject.GetComponent<Animator>().SetTrigger("SpawnAnimation");
+            }
         }
 
         dropCount = 0;
