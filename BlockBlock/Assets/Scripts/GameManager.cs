@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public static int NUM_SPAWN = 3;
 
     public static bool timerMode = false;
-    public GameObject playAgainButton;
+    public Timer timer;
 
     int dropCount = 0;
 
@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
 
     Block[] spawnedBlocks = new Block[NUM_SPAWN];
     Vector2[] spawnPositions = new Vector2[NUM_SPAWN];
+
+    public event System.EventHandler GameOverEvent; 
 
     // Create the singleton instance when GameManager starts
     void Awake()
@@ -43,7 +45,12 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playAgainButton.SetActive(false);
+        if (timerMode)
+        {
+            timer.SetDisplay(true);
+            timer.StartTimer();
+        }
+
         CalculateSpawnPositions();
 
         // Load block prefabs
@@ -60,6 +67,11 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    public void LoadMainMenu() {
+        // Assumes Main Menu is the first scene
+        SceneManager.LoadScene(0);
+    }
+
     // Drops the Block onto the board if valid
     public void DropPiece(Block block)
     {
@@ -68,6 +80,7 @@ public class GameManager : MonoBehaviour
 
         if (IsValidPosition(block))
         {
+            timer.UpdateTime(5);
             // Disable the dropped block
             block.GetComponent<BoxCollider2D>().enabled = false;
 
@@ -113,7 +126,12 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         DisableBlocks();
-        playAgainButton.SetActive(true);
+
+        // Fire event
+        if (GameOverEvent != null)
+        {
+            GameOverEvent(this, System.EventArgs.Empty);
+        }
     }
 
     // Private Functions
