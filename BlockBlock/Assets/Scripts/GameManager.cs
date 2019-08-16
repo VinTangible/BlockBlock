@@ -205,11 +205,14 @@ public class GameManager : MonoBehaviour
             {
                 if (grid[x, index] != null)
                 {
-                    // set trigger to transition to the destroy animation
-                    grid[x, index].gameObject.GetComponent<Animator>().SetTrigger("DestroyAnimation");
+                    GameObject blockPiece = grid[x, index].gameObject;
+                    Animator blockPieceAnim = blockPiece.GetComponent<Animator>();
 
-                    // wait 1 second to allow the animation to finish before destroying the block piece
-                    Destroy(grid[x, index].gameObject, 1f);
+                    // set trigger to transition to the destroy animation
+                    blockPieceAnim.SetTrigger("DestroyAnimation");
+
+                    // wait to allow the animation to finish before destroying the block piece
+                    Destroy(blockPiece, blockPieceAnim.GetCurrentAnimatorClipInfo(0).Length);
                     grid[x, index] = null;
                 }
             }
@@ -221,11 +224,14 @@ public class GameManager : MonoBehaviour
             {
                 if (grid[index, y] != null)
                 {
-                    // set trigger to transition to the destroy animation
-                    grid[index, y].gameObject.GetComponent<Animator>().SetTrigger("DestroyAnimation");
+                    GameObject blockPiece = grid[index, y].gameObject;
+                    Animator blockPieceAnim = blockPiece.GetComponent<Animator>();
 
-                    // wait 1 second to allow the animation to finish before destroying the block piece
-                    Destroy(grid[index, y].gameObject, 1f);
+                    // set trigger to transition to the destroy animation
+                    blockPieceAnim.SetTrigger("DestroyAnimation");
+
+                    // wait to allow the animation to finish before destroying the block piece
+                    Destroy(blockPiece, blockPieceAnim.GetCurrentAnimatorClipInfo(0).Length);
                     grid[index, y] = null;
                 }
             }
