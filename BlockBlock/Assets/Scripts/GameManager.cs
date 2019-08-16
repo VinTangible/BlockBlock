@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public static int GRID_WIDTH = 10;
     public static int GRID_HEIGHT = 10;
     public static int NUM_SPAWN = 3;
+    public static int POINT_MULTIPLIER = 10;
 
     // Name of sorting layers
     public static string UP_LAYER = "Up";
@@ -366,7 +367,7 @@ public class GameManager : MonoBehaviour
     // Updates the score based on number of rows/cols cleared
     private void UpdateScore(int amount)
     {
-        score += amount * 10;
+        score += amount * POINT_MULTIPLIER;
     }
 
     private void ResetScore()
