@@ -13,12 +13,10 @@ public class GameManager : MonoBehaviour
     public static int GRID_HEIGHT = 10;
     public static int NUM_SPAWN = 3;
     public static int POINT_MULTIPLIER = 10;
-
-    // Name of sorting layers
-    public static string UP_LAYER = "Up";
-    public static string DOWN_LAYER = "Down";
-
-    public GameObject playAgainButton;
+    
+    public static bool timerMode = false;
+    public Timer timer;
+    public event System.EventHandler GameOverEvent; 
 
     int dropCount = 0;
     private int score = 0;
@@ -49,7 +47,12 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playAgainButton.SetActive(false);
+        if (timerMode)
+        {
+            timer.SetDisplay(true);
+            timer.StartTimer();
+        }
+
         CalculateSpawnPositions();
 
         // Load block prefabs
@@ -66,6 +69,22 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void LoadMainMenu() {
+        // Assumes Main Menu is the first scene
+        SceneManager.LoadScene(0);
+    }
+
+    public void GameOver()
+    {
+        DisableBlocks();
+
+        // Fire event
+        if (GameOverEvent != null)
+        {
+            GameOverEvent(this, System.EventArgs.Empty);
+        }
     }
 
     // Drops the Block onto the board if valid
@@ -369,12 +388,6 @@ public class GameManager : MonoBehaviour
             float xOffset = (float)i/(float)(NUM_SPAWN-1) * widthAfterOffset + leftOffset;
             spawnPositions[i] = new Vector2(xOffset, yOffset);
         }
-    }
-
-    private void GameOver()
-    {
-        DisableBlocks();
-        playAgainButton.SetActive(true);
     }
     
     private void DisableBlocks()
