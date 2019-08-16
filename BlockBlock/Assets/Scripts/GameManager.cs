@@ -212,7 +212,14 @@ public class GameManager : MonoBehaviour
             {
                 if (grid[x, index] != null)
                 {
-                    Destroy(grid[x, index].gameObject);
+                    GameObject blockPiece = grid[x, index].gameObject;
+                    Animator blockPieceAnim = blockPiece.GetComponent<Animator>();
+
+                    // set trigger to transition to the destroy animation
+                    blockPieceAnim.SetTrigger("DestroyAnimation");
+
+                    // wait to allow the animation to finish before destroying the block piece
+                    Destroy(blockPiece, blockPieceAnim.GetCurrentAnimatorClipInfo(0).Length);
                     grid[x, index] = null;
                 }
             }
@@ -224,7 +231,14 @@ public class GameManager : MonoBehaviour
             {
                 if (grid[index, y] != null)
                 {
-                    Destroy(grid[index, y].gameObject);
+                    GameObject blockPiece = grid[index, y].gameObject;
+                    Animator blockPieceAnim = blockPiece.GetComponent<Animator>();
+
+                    // set trigger to transition to the destroy animation
+                    blockPieceAnim.SetTrigger("DestroyAnimation");
+
+                    // wait to allow the animation to finish before destroying the block piece
+                    Destroy(blockPiece, blockPieceAnim.GetCurrentAnimatorClipInfo(0).Length);
                     grid[index, y] = null;
                 }
             }
@@ -274,6 +288,13 @@ public class GameManager : MonoBehaviour
 
             // Apply random rotation to block
             RotateBlock(toSpawn);
+
+            // iterate through each of the block's child pieces to trigger their spawn animations
+            foreach(Transform blockPiece in toSpawn.transform)
+            {
+                // set the trigger to transition to the spawn animation
+                blockPiece.gameObject.GetComponent<Animator>().SetTrigger("SpawnAnimation");
+            }
         }
 
         dropCount = 0;
