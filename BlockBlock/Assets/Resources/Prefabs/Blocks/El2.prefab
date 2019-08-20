@@ -50,7 +50,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnPosition: {x: 0, y: 0}
   allowRotation: 1
-  sprite: {fileID: 0}
 --- !u!61 &2681969806020351914
 BoxCollider2D:
   m_ObjectHideFlags: 0

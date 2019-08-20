@@ -29,16 +29,16 @@ public class GameManager : MonoBehaviour
         // Currently spawn position is at 75% screen width, and 50% screen height
         //spawnPos = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
         //spawnPos.Scale(new Vector2((float).75, (float).25));
-        spawnPos = new Vector2(0,-6);
+        spawnPos = new Vector2(-2,-4);
         //spawnPos = Camera.main.ScreenToWorldPoint(new Vector3);
 
         //spawnPos1 = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height)); 
         //spawnPos1.Scale(new Vector2((float).75, (float).5));
-        spawnPos1 = new Vector2(5,-6);
+        spawnPos1 = new Vector2(3,-4);
 
         //spawnPos2 = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
         //spawnPos2.Scale(new Vector2((float).75, (float).75));
-        spawnPos2 = new Vector2(10,-6);
+        spawnPos2 = new Vector2(8,-4);
 
         //holds all different block types to be spawned
         blocks = Resources.LoadAll<Block>(prefabPath);
@@ -101,7 +101,9 @@ public class GameManager : MonoBehaviour
         //checks if block can be rotated
         if(block.allowRotation){
             //block.transform.Rotate(0,0,GetRotationVal());
-            block.transform.RotateAround(block.spawnPosition, Vector3.forward, 90);
+
+            Vector3 center = block.GetComponent<BoxCollider2D>().bounds.center;
+            block.transform.RotateAround(center, Vector3.forward, 90);
         }
     }
 
