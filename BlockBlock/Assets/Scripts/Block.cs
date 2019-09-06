@@ -15,7 +15,7 @@ public class Block : MonoBehaviour
     private Vector2 mouseClickOffset; // Offset of mouse click from the block's origin
     private Vector2 spawnPosition;
     private bool isResettingPosition = false;
-    private bool isUp = false;
+    private bool isHolding = false;
 
     // Initializing happens here
     void Awake()
@@ -40,7 +40,7 @@ public class Block : MonoBehaviour
     // Resets block on Game Over
     private void OnGameOverEvent(object sender, System.EventArgs e)
     {
-        if (isUp) {
+        if (isHolding) {
             ResetPosition(translate: true);
         }
     }
@@ -72,7 +72,7 @@ public class Block : MonoBehaviour
     // Mouse Functions
     void OnMouseDown()
     {
-        isUp = true;
+        isHolding = true;
 
         // Calculate offset of the mouse position and starting position of parent when drag begins
         mouseClickOffset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
@@ -85,7 +85,7 @@ public class Block : MonoBehaviour
 
     void OnMouseDrag()
     {
-        if (isUp) {
+        if (isHolding) {
             Vector2 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             transform.position = newPosition - mouseClickOffset;
         }
@@ -93,7 +93,7 @@ public class Block : MonoBehaviour
 
     void OnMouseUp()
     {
-        isUp = false;
+        isHolding = false;
 
         // When mouse is released, set the piece down and set sorting layer
         SetSortingLayer(false);
@@ -115,7 +115,7 @@ public class Block : MonoBehaviour
     // Resets block back to its original spawn position. Translates the reset if flag is true.
     public void ResetPosition(bool translate)
     {
-        isUp = false;
+        isHolding = false;
 
         if (spawnPosition != null)
         {
