@@ -132,7 +132,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            block.ResetPosition();
+            block.ResetPosition(translate: true);
         }
 
     }
@@ -163,7 +163,7 @@ public class GameManager : MonoBehaviour
                         if (IsValidPosition(block))
                         {
                             // Reset block back to its spawn position
-                            block.ResetPosition();
+                            block.ResetPosition(translate: false);
 
                             return true;
                         }
@@ -171,7 +171,7 @@ public class GameManager : MonoBehaviour
                 }
                 
                 // Reset block back to its spawn position after checking
-                block.ResetPosition();
+                block.ResetPosition(translate: false);
             }
         }
 

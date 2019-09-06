@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    public float SCALE = .6f; // Used for scaling down blocks when in their spawn positions
+    // Constants
+    private float SCALE = .6f; // Used for scaling down blocks when in their spawn positions
+    private float RESET_SPEED = 100;
     
     // Limit numRotations to be values from 0 to 3
     [Range(0,3)]
@@ -12,6 +14,7 @@ public class Block : MonoBehaviour
 
     private Vector2 mouseClickOffset; // Offset of mouse click from the block's origin
     private Vector2 spawnPosition;
+    private bool isResettingPosition = false;
 
     // Initializing happens here
     void Awake()
@@ -21,6 +24,14 @@ public class Block : MonoBehaviour
 
         // Scale down block when rendered
         ScaleDown();
+    }
+
+    void Update() {
+        // If Reset flag is set then move block towards spawn position
+        if (isResettingPosition)
+        {
+            MoveTowardsSpawnPosition();
+        }
     }
 
     // Increments or decrements sorting layer based on passed in bool
@@ -34,12 +45,26 @@ public class Block : MonoBehaviour
         }
     }
 
+    // Moves Block towards its spawn position
+    private void MoveTowardsSpawnPosition()
+    {
+        if (spawnPosition != null && transform.position != (Vector3)spawnPosition) 
+        {
+            transform.position = Vector2.MoveTowards(transform.position, spawnPosition, Time.deltaTime * RESET_SPEED);
+        }
+        else
+        {
+            isResettingPosition = false;
+        }
+    }
+
     // Mouse Functions
     void OnMouseDown()
     {
         // Calculate offset of the mouse position and starting position of parent when drag begins
         mouseClickOffset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         ResetScale();
+        isResettingPosition = false;
 
         // Set layer of game object to "Up"
         SetSortingLayer(true);
@@ -70,13 +95,21 @@ public class Block : MonoBehaviour
         transform.localScale = new Vector2(SCALE,SCALE);
     }
 
-    // Resets block back to its original spawn position
-    public void ResetPosition()
+    // Resets block back to its original spawn position. Translates the reset if flag is true.
+    public void ResetPosition(bool translate)
     {
         if (spawnPosition != null)
         {
-            transform.position = spawnPosition;
             ScaleDown();
+            
+            if (translate)
+            {
+                isResettingPosition = true;
+            }
+            else
+            {
+                transform.position = spawnPosition;
+            }
         }
         else
         {

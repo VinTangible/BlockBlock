@@ -20,7 +20,7 @@ public class Timer : MonoBehaviour
     }
 
     // Add or subtract time left
-    public void UpdateTime(int delta)
+    public void AddTime(int delta)
     {
         timeLeft += delta;
         UpdateTimerText();
@@ -63,7 +63,7 @@ public class Timer : MonoBehaviour
         while (timeLeft > 0)
         {
             yield return new WaitForSeconds(1);
-            UpdateTime(-1);
+            AddTime(-1);
         }
 
         GameManager.instance.GameOver();
