@@ -716,10 +716,10 @@ MonoBehaviour:
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Score Text
+  m_Text: 'Score: 0'
 --- !u!222 &1532843844
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -950,7 +950,7 @@ GameObject:
   - component: {fileID: 1813020197}
   - component: {fileID: 1813020200}
   - component: {fileID: 1813020199}
-  - component: {fileID: 1813020201}
+  - component: {fileID: 1813020202}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -971,6 +971,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timer: {fileID: 1813020199}
+  scoreManager: {fileID: 1813020202}
 --- !u!4 &1813020198
 Transform:
   m_ObjectHideFlags: 0
@@ -1014,7 +1015,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playAgainButton: {fileID: 1657232316}
   mainMenuButton: {fileID: 1358550137}
---- !u!114 &1813020201
+--- !u!114 &1813020202
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1023,7 +1024,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1813020196}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 822abe4daf94ba04ca8db0715b1b18a5, type: 3}
+  m_Script: {fileID: 11500000, guid: 80e874dc01c0a45df8dd5ade387980c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 1532843843}
