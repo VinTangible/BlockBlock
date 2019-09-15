@@ -212,7 +212,8 @@ public class GameManager : MonoBehaviour
             ClearLine(col, false);
         }
 
-        scoreManager.Score += (rowsToClear.Count + colsToClear.Count) * POINT_MULTIPLIER;
+        // Updates the score based on number of rows/cols cleared
+        UpdateScore(rowsToClear.Count + colsToClear.Count);
 
         // Clear hashsets used to indicate which rows/cols to check
         rowsToCheck.Clear();
@@ -394,5 +395,11 @@ public class GameManager : MonoBehaviour
         {
             block.GetComponent<BoxCollider2D>().enabled = false;
         }
+    }
+
+    // Updates the score while applying score multiplier
+    private void UpdateScore(int amount)
+    {
+        scoreManager.Score += amount * POINT_MULTIPLIER;
     }
 }
