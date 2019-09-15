@@ -3,9 +3,9 @@ using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour
 {
-    [SerializeField] // Allows private variables to show in Inspector
-    private Text scoreText;
     private int score;
+
+    public Text scoreText;
 
     private void Awake()
     {

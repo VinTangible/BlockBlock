@@ -8,11 +8,10 @@ public class Timer : MonoBehaviour
     private string TIMER_LABEL = "Time: ";
     private IEnumerator coroutine;
 
-    [SerializeField] // Allows private variables to display on Inspector
-    private Text timeDisplay;   // Text object to display time left
 
     public int startTime = 5;   // Default start time is set to 5 if it's not set
     public int timeLeft;        // Time left
+    public Text timeDisplay;   // Text object to display time left
 
     void Awake() {
         GameManager.instance.GameOverEvent += OnGameOverEvent;
