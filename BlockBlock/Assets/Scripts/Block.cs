@@ -15,12 +15,15 @@ public class Block : MonoBehaviour
     private Vector2 mouseClickOffset; // Offset of mouse click from the block's origin
     private Vector2 spawnPosition;
     private bool isResettingPosition = false;
+    private bool isHolding = false;
 
     // Initializing happens here
     void Awake()
     {
         // Set position when block is initialized
         spawnPosition = transform.position;
+
+        GameManager.instance.GameOverEvent += OnGameOverEvent;
 
         // Scale down block when rendered
         ScaleDown();
@@ -31,6 +34,14 @@ public class Block : MonoBehaviour
         if (isResettingPosition)
         {
             MoveTowardsSpawnPosition();
+        }
+    }
+
+    // Resets block on Game Over
+    private void OnGameOverEvent(object sender, System.EventArgs e)
+    {
+        if (isHolding) {
+            ResetPosition(translate: true);
         }
     }
 
@@ -61,6 +72,8 @@ public class Block : MonoBehaviour
     // Mouse Functions
     void OnMouseDown()
     {
+        isHolding = true;
+
         // Calculate offset of the mouse position and starting position of parent when drag begins
         mouseClickOffset = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         ResetScale();
@@ -72,12 +85,16 @@ public class Block : MonoBehaviour
 
     void OnMouseDrag()
     {
-        Vector2 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = newPosition - mouseClickOffset;
+        if (isHolding) {
+            Vector2 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            transform.position = newPosition - mouseClickOffset;
+        }
     }
 
     void OnMouseUp()
     {
+        isHolding = false;
+
         // When mouse is released, set the piece down and set sorting layer
         SetSortingLayer(false);
         GameManager.instance.DropPiece(this);
@@ -98,6 +115,8 @@ public class Block : MonoBehaviour
     // Resets block back to its original spawn position. Translates the reset if flag is true.
     public void ResetPosition(bool translate)
     {
+        isHolding = false;
+
         if (spawnPosition != null)
         {
             ScaleDown();
