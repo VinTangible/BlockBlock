@@ -8,10 +8,9 @@ public class Timer : MonoBehaviour
     private string TIMER_LABEL = "Time: ";
     private IEnumerator coroutine;
 
-
     public int startTime = 5;   // Default start time is set to 5 if it's not set
     public int timeLeft;        // Time left
-    public Text timeDisplay;   // Text object to display time left
+    public Text timeDisplay;    // Text object to display time left
 
     void Awake() {
         GameManager.instance.GameOverEvent += OnGameOverEvent;
