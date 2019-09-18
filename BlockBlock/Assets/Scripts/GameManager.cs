@@ -16,10 +16,10 @@ public class GameManager : MonoBehaviour
     
     public static bool timerMode = false;
     public Timer timer;
+    public ScoreManager scoreManager;
     public event System.EventHandler GameOverEvent; 
 
     int dropCount = 0;
-    private int score = 0;
 
     Block[] blocks;         // Used to store Block prefabs
     Transform pieces;       // Used to store Blocks in Scene Hierarchy
@@ -63,8 +63,6 @@ public class GameManager : MonoBehaviour
 
         // Spawn inital block
         SpawnBlocks();
-
-        ResetScore();
     }
 
     public void RestartGame() {
@@ -214,6 +212,7 @@ public class GameManager : MonoBehaviour
             ClearLine(col, false);
         }
 
+        // Updates the score based on number of rows/cols cleared
         UpdateScore(rowsToClear.Count + colsToClear.Count);
 
         // Clear hashsets used to indicate which rows/cols to check
@@ -398,19 +397,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Updates the score based on number of rows/cols cleared
+    // Updates the score while applying score multiplier
     private void UpdateScore(int amount)
     {
-        score += amount * POINT_MULTIPLIER;
-    }
-
-    private void ResetScore()
-    {
-        score = 0;
-    }
-
-    public int getScore()
-    {
-        return score;
+        scoreManager.Score += amount * POINT_MULTIPLIER;
     }
 }
